@@ -1,0 +1,23 @@
+{
+    "export_name": "data.json",
+    "dir_images_train": "./data/img",
+    "dir_images_test": "./data/img",
+    "dir_images_val": "./data/img",
+    "path_matching_train": "./data/train.lst",
+    "path_matching_val": "./data/validate.lst",
+    "path_matching_test": "./data/test.lst",
+    "path_formulas_train": "./data/formulas.lst",
+    "path_formulas_test": "./data/formulas.lst",
+    "path_formulas_val": "./data/formulas.lst",
+    "bucket_train": true,
+    "bucket_val": true,
+    "bucket_test": true,
+    "max_iter": null,
+    "max_length_formula": 150,
+    "buckets": [
+        [
+            240,
+            40
+        ]
+    ]
+}
