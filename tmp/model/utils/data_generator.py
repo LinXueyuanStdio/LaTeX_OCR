@@ -28,7 +28,7 @@ class DataGeneratorFile(object):
         with open(self._filename) as f:
             for line in f:
                 line = line.strip().split(" ")
-                path_img, id_formula = line[0], line[1]
+                path_img, id_formula = line[1], line[0]
                 yield path_img, id_formula
 
 
@@ -164,7 +164,7 @@ class DataGenerator(object):
 
         img = imread(self._dir_images + "/" + img_path + ".png")
         img = self._img_prepro(img)
-        formula = list(self._form_prepro(self._get_raw_formula(formula_id))) # py3.x 要加 list()， 不然会返回 map
+        formula = self._form_prepro(self._get_raw_formula(formula_id)) # py3.x 要加 list()， 不然会返回 map
 
 
         if self._iter_mode == "data":

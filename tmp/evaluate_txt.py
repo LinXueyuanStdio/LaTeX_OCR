@@ -35,8 +35,7 @@ def main(results):
             form_prepro=vocab.form_prepro,)
 
     # use model to write predictions in files
-    config_eval = Config({"dir_answers": dir_output + "formulas_test/",
-                          "batch_size": 20})
+    config_eval = Config({"dir_answers": dir_output + "formulas_test/", "batch_size": 20})
     files, perplexity = model.write_prediction(config_eval, test_set)
     formula_ref, formula_hyp = files[0], files[1]
 

@@ -19,16 +19,16 @@ def get_max_shape(arrays):
 
     """
     # hack
-    return [40, 240, 1]
-    # shapes = map(lambda x: list(x.shape), arrays)
-    # ndim = len(arrays[0].shape)
-    # print(len(arrays), arrays[0].shape)  # 20 (40, 240, 1)
-    # max_shape = []
-    # for d in range(ndim):
-    #     max_shape += [max(shapes, key=lambda x: x[d])[d]]
-    #     print(d, " ", max_shape, " ", shapes)  # 0   [40]   <map object at 0x7f6df801d518>
+    # return [40, 240, 1]
+    shapes = map(lambda x: list(x.shape), arrays)
+    ndim = len(arrays[0].shape)
+    print(len(arrays), arrays[0].shape)  # 20 (40, 240, 1)
+    max_shape = []
+    for d in range(ndim):
+        max_shape += [max(shapes, key=lambda x: x[d])[d]]
+        print(d, " ", max_shape, " ", shapes)  # 0   [40]   <map object at 0x7f6df801d518>
 
-    # return max_shape
+    return max_shape
 
 
 def pad_batch_images(images, max_shape=None):
@@ -162,8 +162,7 @@ def convert_to_png(formula, dir_output, name, quality=100, density=200,
     """
     # write formula into a .tex file
     with open(dir_output + "{}.tex".format(name), "w") as f:
-        f.write(
-            r"""\documentclass[preview]{standalone}
+        f.write(r"""\documentclass[preview]{standalone}
     \begin{document}
         $$ %s $$
     \end{document}""" % (formula))
@@ -174,7 +173,8 @@ def convert_to_png(formula, dir_output, name, quality=100, density=200,
 
     # call magick to convert the pdf into a png file
     run("magick convert -density {} -quality {} {} {}".format(density, quality,
-                                                              dir_output+"{}.pdf".format(name), dir_output+"{}.png".format(name)),
+                                                              dir_output+"{}.pdf".format(name),
+                                                              dir_output+"{}.png".format(name)),
         TIMEOUT)
 
     # cropping and downsampling
@@ -223,12 +223,13 @@ def build_images(formulas, dir_images, quality=100, density=200, down_ratio=2,
             generation, path_img = False
     """
     init_dir(dir_images)
-    existing_idx = sorted(set([int(file_name.split('.')[0], 16) for file_name in
-                               get_files(dir_images) if file_name.split('.')[-1] == "png"]))
+    existing_idx = sorted(set([int(file_name.split('.')[0], 16)
+                               for file_name in get_files(dir_images)
+                               if file_name.split('.')[-1] == "png"]))
 
     pool = Pool(n_threads)
-    result = pool.map(build_image, [(idx, form, dir_images, quality, density,
-                                     down_ratio, buckets) for idx, form in formulas.items()
+    result = pool.map(build_image, [(idx, form, dir_images, quality, density, down_ratio, buckets)
+                                    for idx, form in formulas.items()
                                     if idx not in existing_idx])
     pool.close()
     pool.join()
