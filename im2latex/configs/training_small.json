@@ -1,0 +1,17 @@
+{
+    "export_name": "training.json",
+
+    "lr_method"    : "Adam",
+    "n_epochs"     : 40,
+    "batch_size"   : 4,
+    "dropout"      : 1,
+    "metric_val"   : "perplexity",
+    "clip"         : -1,
+
+    "lr_init"      : 1e-3,
+    "lr_min"       : 1e-5,
+    "start_decay"  : 6,
+    "end_decay"    : 13,
+    "lr_warm"      : 1e-3,
+    "end_warm"     : 0
+}

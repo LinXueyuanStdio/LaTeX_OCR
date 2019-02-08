@@ -1,0 +1,11 @@
+data/
+results/
+tmp/
+*.rsyncignore
+*.DS_Store
+*.pyc
+*.aux
+*.log
+*.gz
+*.log
+*.sh
