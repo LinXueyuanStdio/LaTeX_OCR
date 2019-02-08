@@ -34,8 +34,6 @@ def formula_prepro(vocab, id_unk):
 
     """
     # test
-    for key, value in vocab.items() :
-        print (key, value)
     def get_token_id(token):
         return vocab[token] if token in vocab else id_unk
 

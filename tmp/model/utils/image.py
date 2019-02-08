@@ -202,8 +202,7 @@ def build_image(item):
     return (path_img, idx)
 
 
-def build_images(formulas, dir_images, quality=100, density=200, down_ratio=2,
-                 buckets=None, n_threads=4):
+def build_images(formulas, dir_images, quality=100, density=200, down_ratio=2, buckets=None, n_threads=4):
     """Parallel procedure to produce images from formulas
 
     If some of the images have already been produced, does not recompile them.
@@ -216,7 +215,7 @@ def build_images(formulas, dir_images, quality=100, density=200, down_ratio=2,
             generation, path_img = False
     """
     init_dir(dir_images)
-    existing_idx = sorted(set([int(file_name.split('.')[0], 16)
+    existing_idx = sorted(set([int(file_name.split('.')[0])
                                for file_name in get_files(dir_images)
                                if file_name.split('.')[-1] == "png"]))
 

@@ -161,7 +161,7 @@ class DataGenerator(object):
         """
         img_path, formula_id = example
 
-        img = imread(self._dir_images + "/" + img_path)
+        img = imread(self._dir_images + img_path)
         img = self._img_prepro(img)
         formula = self._form_prepro(self._get_raw_formula(formula_id)) # py3.x 要加 list()， 不然会返回 map
 
@@ -207,8 +207,7 @@ class DataGenerator(object):
 
         return self._length
 
-    def build(self, quality=100, density=200, down_ratio=2, buckets=None,
-              n_threads=4):
+    def build(self, quality=100, density=200, down_ratio=2, buckets=None, n_threads=4):
         """Generates images from the formulas and writes the correspondance
         in the matching file.
 

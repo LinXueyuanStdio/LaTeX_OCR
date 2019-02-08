@@ -33,8 +33,7 @@ def dynamic_decode(decoder_cell, maximum_iterations):
         return tf.TensorArray(dtype=d, size=0, dynamic_size=True)
 
     initial_time = tf.constant(0, dtype=tf.int32)
-    initial_outputs_ta = nest.map_structure(create_ta,
-            decoder_cell.output_dtype)
+    initial_outputs_ta = nest.map_structure(create_ta, decoder_cell.output_dtype)
     initial_state, initial_inputs, initial_finished = decoder_cell.initialize()
 
     def condition(time, unused_outputs_ta, unused_state, unused_inputs,

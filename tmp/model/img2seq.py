@@ -194,18 +194,19 @@ class Img2SeqModel(BaseModel):
             ce_words_eval, n_words_eval, ids_eval = self.sess.run(
                 [self.ce_words, self.n_words, self.pred_test.ids],
                 feed_dict=fd)
-
+            print(ids_eval)
             # TODO(guillaume): move this logic into tf graph
             if self._config.decoding == "greedy":
                 ids_eval = np.expand_dims(ids_eval, axis=1)
 
             elif self._config.decoding == "beam_search":
                 ids_eval = np.transpose(ids_eval, [0, 2, 1])
-
+            print(ids_eval)
             n_words += n_words_eval
             ce_words += ce_words_eval
             for form, preds in zip(formula, ids_eval):
                 refs.append(form)
+                print(form, len(preds))
                 for i, pred in enumerate(preds):
                     hyps[i].append(pred)
 
