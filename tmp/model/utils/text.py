@@ -33,6 +33,9 @@ def get_form_prepro(vocab, id_unk):
         lambda function(formula) -> list of ids
 
     """
+    # test
+    for key, value in vocab.items() :
+        print (key, value)
     def get_token_id(token):
         return vocab[token] if token in vocab else id_unk
 
@@ -157,12 +160,10 @@ def pad_batch_formulas(formulas, id_pad, id_end, max_len=None):
     if max_len is None:
         max_len = max(map(lambda x: len(x), formulas))
 
-    batch_formulas = id_pad * np.ones([len(formulas), max_len+1],
-                                      dtype=np.int32)
+    batch_formulas = id_pad * np.ones([len(formulas), max_len+1], dtype=np.int32)
     formula_length = np.zeros(len(formulas), dtype=np.int32)
     for idx, formula in enumerate(formulas):
-        batch_formulas[idx, :len(formula)] = np.asarray(formula,
-                                                        dtype=np.int32)
+        batch_formulas[idx, :len(formula)] = np.asarray(formula, dtype=np.int32)
         batch_formulas[idx, len(formula)] = id_end
         formula_length[idx] = len(formula) + 1
 

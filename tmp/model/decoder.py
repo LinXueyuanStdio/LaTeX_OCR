@@ -40,43 +40,32 @@ class Decoder(object):
         E = tf.get_variable("E", initializer=embedding_initializer(),
                             shape=[self._n_tok, dim_embeddings], dtype=tf.float32)
 
-        start_token = tf.get_variable("start_token", dtype=tf.float32,
-                                      shape=[dim_embeddings], initializer=embedding_initializer())
+        start_token = tf.get_variable("start_token", dtype=tf.float32, shape=[dim_embeddings], initializer=embedding_initializer())
 
         batch_size = tf.shape(img)[0]
 
         # training
         with tf.variable_scope("attn_cell", reuse=False):
-            embeddings = get_embeddings(formula, E, dim_embeddings,
-                                        start_token, batch_size)
-            attn_meca = AttentionMechanism(img,
-                                           self._config.attn_cell_config["dim_e"])
+            embeddings = get_embeddings(formula, E, dim_embeddings,  start_token, batch_size)
+            attn_meca = AttentionMechanism(img, self._config.attn_cell_config["dim_e"])
             recu_cell = LSTMCell(self._config.attn_cell_config["num_units"])
-            attn_cell = AttentionCell(recu_cell, attn_meca, dropout,
-                                      self._config.attn_cell_config, self._n_tok)
+            attn_cell = AttentionCell(recu_cell, attn_meca, dropout, self._config.attn_cell_config, self._n_tok)
 
-            train_outputs, _ = tf.nn.dynamic_rnn(attn_cell, embeddings,
-                                                 initial_state=attn_cell.initial_state())
+            train_outputs, _ = tf.nn.dynamic_rnn(attn_cell, embeddings, initial_state=attn_cell.initial_state())
 
         # decoding
         with tf.variable_scope("attn_cell", reuse=True):
-            attn_meca = AttentionMechanism(img=img,
-                                           dim_e=self._config.attn_cell_config["dim_e"],
-                                           tiles=self._tiles)
-            recu_cell = LSTMCell(self._config.attn_cell_config["num_units"],
-                                 reuse=True)
-            attn_cell = AttentionCell(recu_cell, attn_meca, dropout,
-                                      self._config.attn_cell_config, self._n_tok)
+            attn_meca = AttentionMechanism(img, self._config.attn_cell_config["dim_e"], tiles=self._tiles)
+            recu_cell = LSTMCell(self._config.attn_cell_config["num_units"], reuse=True)
+            attn_cell = AttentionCell(recu_cell, attn_meca, dropout, self._config.attn_cell_config, self._n_tok)
             if self._config.decoding == "greedy":
-                decoder_cell = GreedyDecoderCell(E, attn_cell, batch_size,
-                                                 start_token, id_end)
+                decoder_cell = GreedyDecoderCell(E, attn_cell, batch_size, start_token, self._id_end)
             elif self._config.decoding == "beam_search":
-                decoder_cell = BeamSearchDecoderCell(E, attn_cell, batch_size,
-                                                     start_token, self._id_end, self._config.beam_size,
+                decoder_cell = BeamSearchDecoderCell(E, attn_cell, batch_size, start_token,
+                                                     self._id_end, self._config.beam_size,
                                                      self._config.div_gamma, self._config.div_prob)
 
-            test_outputs, _ = dynamic_decode(decoder_cell,
-                                             self._config.max_length_formula+1)
+            test_outputs, _ = dynamic_decode(decoder_cell, self._config.max_length_formula+1)
 
         return train_outputs, test_outputs
 
