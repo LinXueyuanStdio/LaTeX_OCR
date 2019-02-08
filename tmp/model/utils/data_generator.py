@@ -28,7 +28,7 @@ class DataGeneratorFile(object):
         with open(self._filename) as f:
             for line in f:
                 line = line.strip().split(" ")
-                path_img, id_formula = line[1], line[0]
+                path_img, id_formula = line[0], line[1]
                 yield path_img, id_formula
 
 
@@ -138,8 +138,7 @@ class DataGenerator(object):
         try:
             formula_raw = self._formulas[int(formula_id)]
         except KeyError:
-            print("Tried to access id {} but only {} formulas".format(
-                formula_id, len(self._formulas)))
+            print("Tried to access id {} but only {} formulas".format(formula_id, len(self._formulas)))
             print("Possible fix: mismatch between matching file and formulas")
             raise KeyError
 
@@ -162,7 +161,7 @@ class DataGenerator(object):
         """
         img_path, formula_id = example
 
-        img = imread(self._dir_images + "/" + img_path + ".png")
+        img = imread(self._dir_images + "/" + img_path)
         img = self._img_prepro(img)
         formula = self._form_prepro(self._get_raw_formula(formula_id)) # py3.x 要加 list()， 不然会返回 map
 
@@ -173,7 +172,7 @@ class DataGenerator(object):
             inst = (img, formula, img_path, formula_id)
 
         # filter on the formula length
-        if self._max_len is not None and len(list(formula)) > self._max_len:
+        if self._max_len is not None and len(formula) > self._max_len:
             skip = True
         else:
             skip = False

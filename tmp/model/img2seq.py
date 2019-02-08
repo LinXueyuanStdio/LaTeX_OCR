@@ -72,7 +72,7 @@ class Img2SeqModel(BaseModel):
         self.formula_length = tf.placeholder(tf.int32, shape=(None, ),   name='formula_length')
 
         # tensorboard
-        tf.summary.scalar("learning rate", self.lr)
+        tf.summary.scalar("learning_rate", self.lr)
         tf.summary.image("img", self.img)
 
     def _get_feed_dict(self, img, training, formula=None, lr=None, dropout=1):
@@ -119,8 +119,8 @@ class Img2SeqModel(BaseModel):
 
         # for tensorboard
         tf.summary.scalar("loss", self.loss)
-        tf.summary.scalar("sum of CE for each word", self.ce_words)
-        tf.summary.scalar("number of words", self.n_words)
+        tf.summary.scalar("sum_of_CE_for_each_word", self.ce_words)
+        tf.summary.scalar("number_of_words", self.n_words)
 
     def _run_epoch(self, config, train_set, val_set, epoch, lr_schedule):
         """Performs an epoch of training

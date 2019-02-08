@@ -20,10 +20,10 @@ class Vocab(object):
 
     @property
     def form_prepro(self):
-        return get_form_prepro(self.tok_to_id, self.id_unk)
+        return formula_prepro(self.tok_to_id, self.id_unk)
 
 
-def get_form_prepro(vocab, id_unk):
+def formula_prepro(vocab, id_unk):
     """Given a vocab, returns a lambda function word -> id
 
     Args:
@@ -39,11 +39,7 @@ def get_form_prepro(vocab, id_unk):
     def get_token_id(token):
         return vocab[token] if token in vocab else id_unk
 
-    def f(formula):
-        formula = formula.strip().split(" ")
-        return map(lambda t: get_token_id(t), formula)
-
-    return f
+    return lambda formula: [get_token_id(t) for t in formula.strip().split(" ")]
 
 
 def load_tok_to_id(filename, tokens=[]):
