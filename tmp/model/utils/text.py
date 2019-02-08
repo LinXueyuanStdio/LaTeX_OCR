@@ -40,7 +40,7 @@ def get_form_prepro(vocab, id_unk):
         return vocab[token] if token in vocab else id_unk
 
     def f(formula):
-        formula = list(formula.strip())
+        formula = formula.strip().split(" ")
         return map(lambda t: get_token_id(t), formula)
 
     return f

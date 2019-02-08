@@ -36,7 +36,7 @@ class DataGenerator(object):
     """Data Generator of tuple (image, formula)"""
 
     def __init__(self, path_formulas, dir_images, path_matching, bucket=False,
-                 form_prepro=lambda s: list(s.strip()), iter_mode="data",
+                 form_prepro=lambda s: s.strip().split(" "), iter_mode="data",
                  img_prepro=lambda x: x, max_iter=None, max_len=None,
                  bucket_size=20):
         """Initializes the DataGenerator

@@ -102,16 +102,8 @@ class BaseModel(object):
         dir_model = self._dir_output + "model.weights/"
         init_dir(dir_model)
 
-        # logging
-        sys.stdout.write("\r- Saving model...")
-        sys.stdout.flush()
-
-        # saving
+        self.logger.info("- Saving model...")
         self.saver.save(self.sess, dir_model)
-
-        # logging
-        sys.stdout.write("\r")
-        sys.stdout.flush()
         self.logger.info("- Saved model in {}".format(dir_model))
 
 
@@ -156,14 +148,12 @@ class BaseModel(object):
             self.logger.info("Epoch {:}/{:}".format(epoch+1, config.n_epochs))
 
             # epoch
-            score = self._run_epoch(config, train_set, val_set, epoch,
-                    lr_schedule)
+            score = self._run_epoch(config, train_set, val_set, epoch, lr_schedule)
 
             # save weights if we have new best score on eval
             if best_score is None or score >= best_score:
                 best_score = score
-                self.logger.info("- New best score ({:04.2f})!".format(
-                        best_score))
+                self.logger.info("- New best score ({:04.2f})!".format(best_score))
                 self.save_session()
             if lr_schedule.stop_training:
                 self.logger.info("- Early Stopping.")
@@ -171,8 +161,7 @@ class BaseModel(object):
 
             # logging
             toc = time.time()
-            self.logger.info("- Elapsed time: {:04.2f}, lr: {:04.5f}".format(
-                            toc-tic, lr_schedule.lr))
+            self.logger.info("- Elapsed time: {:04.2f}, lr: {:04.5f}".format(toc-tic, lr_schedule.lr))
 
         return best_score
 
@@ -210,18 +199,9 @@ class BaseModel(object):
             scores: (dict) scores["acc"] = 0.85 for instance
 
         """
-        # logging
-        sys.stdout.write("\r- Evaluating...")
-        sys.stdout.flush()
-
-        # evaluate
-        scores = self._run_evaluate(config, test_set)
-
-        # logging
-        sys.stdout.write("\r")
-        sys.stdout.flush()
-        msg = " - ".join(["{} {:04.2f}".format(k, v)
-                for k, v in scores.items()])
+        self.logger.info("- Evaluating...")
+        scores = self._run_evaluate(config, test_set) # evaluate
+        msg = " ... ".join([" {} {:04.2f} ".format(k, v) for k, v in scores.items()])
         self.logger.info("- Eval: {}".format(msg))
 
         return scores

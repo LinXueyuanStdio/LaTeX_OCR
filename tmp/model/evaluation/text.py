@@ -27,8 +27,8 @@ def score_files(path_ref, path_hyp):
     assert len(formulas_ref) == len(formulas_hyp)
 
     # tokenize
-    refs = [list(ref) for _, ref in formulas_ref.items()]
-    hyps = [list(hyp) for _, hyp in formulas_hyp.items()]
+    refs = [ref.split(" ") for _, ref in formulas_ref.items()]
+    hyps = [hyp.split(" ") for _, hyp in formulas_hyp.items()]
 
     # score
     return {
@@ -127,7 +127,7 @@ def write_answers(references, hypotheses, rev_vocab, dir_name, id_end):
     def ids_to_str(ids):
         ids = truncate_end(ids, id_end)
         s = [rev_vocab[idx] for idx in ids]
-        return "".join(s)
+        return " ".join(s)
 
     def write_file(file_name, list_of_list):
         print("writting file ", file_name)
