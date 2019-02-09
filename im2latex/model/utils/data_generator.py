@@ -27,19 +27,18 @@ class DataGeneratorFile(object):
     def __iter__(self):
         with open(self._filename) as f:
             for line in f:
-                line = line.strip().split(' ')
+                line = line.strip().split(" ")
                 path_img, id_formula = line[0], line[1]
                 yield path_img, id_formula
-
 
 
 class DataGenerator(object):
     """Data Generator of tuple (image, formula)"""
 
     def __init__(self, path_formulas, dir_images, path_matching, bucket=False,
-                form_prepro=lambda s: s.strip().split(' '), iter_mode="data",
-                img_prepro=lambda x: x, max_iter=None, max_len=None,
-                bucket_size=20):
+                 form_prepro=lambda s: s.strip().split(" "), iter_mode="data",
+                 img_prepro=lambda x: x, max_iter=None, max_len=None,
+                 bucket_size=20):
         """Initializes the DataGenerator
 
         Args:
@@ -59,22 +58,21 @@ class DataGenerator(object):
             bucket_size: (int)
 
         """
-        self._path_formulas  = path_formulas
-        self._dir_images     = dir_images
-        self._path_matching  = path_matching
-        self._img_prepro     = img_prepro
-        self._form_prepro    = form_prepro
-        self._max_iter       = max_iter
-        self._max_len        = max_len
-        self._iter_mode      = iter_mode
-        self._bucket         = bucket
-        self._bucket_size    = bucket_size
+        self._path_formulas = path_formulas
+        self._dir_images = dir_images
+        self._path_matching = path_matching
+        self._img_prepro = img_prepro
+        self._form_prepro = form_prepro
+        self._max_iter = max_iter
+        self._max_len = max_len
+        self._iter_mode = iter_mode
+        self._bucket = bucket
+        self._bucket_size = bucket_size
 
-        self._length         = None
-        self._formulas       = self._load_formulas(path_formulas)
+        self._length = None
+        self._formulas = self._load_formulas(path_formulas)
 
         self._set_data_generator()
-
 
     def _set_data_generator(self):
         """Sets iterable or generator of tuples (img_path, id of formula)"""
@@ -82,7 +80,6 @@ class DataGenerator(object):
 
         if self._bucket:
             self._data_generator = self.bucket(self._bucket_size)
-
 
     def bucket(self, bucket_size):
         """Iterates over the listing and creates buckets of same shape images.
@@ -96,11 +93,11 @@ class DataGenerator(object):
         """
         print("Bucketing the dataset...")
         bucketed_dataset = []
-        old_mode = self._iter_mode # store the old iteration mode
+        old_mode = self._iter_mode  # store the old iteration mode
         self._iter_mode = "full"
 
         # iterate over the dataset in "full" mode and create buckets
-        data_buckets = dict() # buffer for buckets
+        data_buckets = dict()  # buffer for buckets
         for idx, (img, formula, img_path, formula_id) in enumerate(self):
             s = img.shape
             if s not in data_buckets:
@@ -118,13 +115,11 @@ class DataGenerator(object):
             for (img_path, formula_id) in v:
                 bucketed_dataset += [(img_path, formula_id)]
 
-
         self._iter_mode = old_mode
-        self._length    = idx + 1
+        self._length = idx + 1
 
         print("- done.")
         return bucketed_dataset
-
 
     def _load_formulas(self, filename):
         """Loads txt file with formulas in a dict
@@ -139,18 +134,15 @@ class DataGenerator(object):
         formulas = load_formulas(filename)
         return formulas
 
-
     def _get_raw_formula(self, formula_id):
         try:
             formula_raw = self._formulas[int(formula_id)]
         except KeyError:
-            print("Tried to access id {} but only {} formulas".format(
-                formula_id, len(self._formulas)))
+            print("Tried to access id {} but only {} formulas".format(formula_id, len(self._formulas)))
             print("Possible fix: mismatch between matching file and formulas")
             raise KeyError
 
         return formula_raw
-
 
     def _process_instance(self, example):
         """From path and formula id, returns actual data
@@ -169,9 +161,9 @@ class DataGenerator(object):
         """
         img_path, formula_id = example
 
-        img = imread(self._dir_images + "/" + img_path)
+        img = imread(self._dir_images + img_path)
         img = self._img_prepro(img)
-        formula = self._form_prepro(self._get_raw_formula(formula_id))
+        formula = self._form_prepro(self._get_raw_formula(formula_id))  # py3.x 要加 list()， 不然会返回 map
 
         if self._iter_mode == "data":
             inst = (img, formula)
@@ -185,7 +177,6 @@ class DataGenerator(object):
             skip = False
 
         return inst, skip
-
 
     def __iter__(self):
         """Iterator over Dataset
@@ -204,7 +195,6 @@ class DataGenerator(object):
             n_iter += 1
             yield result
 
-
     def __len__(self):
         if self._length is None:
             print("First call to len(dataset) - may take a while.")
@@ -216,9 +206,7 @@ class DataGenerator(object):
 
         return self._length
 
-
-    def build(self, quality=100, density=200, down_ratio=2, buckets=None,
-                n_threads=4):
+    def build(self, quality=100, density=200, down_ratio=2, buckets=None, n_threads=4):
         """Generates images from the formulas and writes the correspondance
         in the matching file.
 
@@ -233,10 +221,10 @@ class DataGenerator(object):
         # 1. produce images
         init_dir(self._dir_images)
         result = build_images(self._formulas, self._dir_images, quality,
-                density, down_ratio, buckets, n_threads)
+                              density, down_ratio, buckets, n_threads)
 
         # 2. write matching with same convention of naming
         with open(self._path_matching, "w") as f:
             for (path_img, idx) in result:
-                if path_img is not False: # image was successfully produced
+                if path_img is not False:  # image was successfully produced
                     f.write("{} {}\n".format(path_img, idx))

@@ -8,7 +8,6 @@ class Vocab(object):
         self.config = config
         self.load_vocab()
 
-
     def load_vocab(self):
         special_tokens = [self.config.unk, self.config.pad, self.config.end]
         self.tok_to_id = load_tok_to_id(self.config.path_vocab, special_tokens)
@@ -18,7 +17,6 @@ class Vocab(object):
         self.id_pad = self.tok_to_id[self.config.pad]
         self.id_end = self.tok_to_id[self.config.end]
         self.id_unk = self.tok_to_id[self.config.unk]
-
 
     @property
     def form_prepro(self):
@@ -35,14 +33,11 @@ def get_form_prepro(vocab, id_unk):
         lambda function(formula) -> list of ids
 
     """
+    # test
     def get_token_id(token):
         return vocab[token] if token in vocab else id_unk
 
-    def f(formula):
-        formula = formula.strip().split(' ')
-        return list(map(lambda t: get_token_id(t), formula))
-
-    return f
+    return lambda formula: [get_token_id(t) for t in formula.strip().split(" ")]
 
 
 def load_tok_to_id(filename, tokens=[]):
@@ -66,6 +61,33 @@ def load_tok_to_id(filename, tokens=[]):
         tok_to_id[tok] = len(tok_to_id)
 
     return tok_to_id
+
+
+def build_vocab_from_file(file_paths, min_count=10):
+    """Build vocabulary from an iterable of datasets objects
+
+    Args:
+        file_paths: a list of file paths, [string,]
+        min_count: (int) if token appears less times, do not include it.
+
+    Returns:
+        a set of all the words in the file in file_paths
+
+    """
+    print("Building vocab...")
+    c = Counter()
+    for file_path in file_paths:
+        with open(file_path) as f:
+            for line in f.readlines():
+                formula = line.strip()
+                try:
+                    c.update(formula)
+                except Exception:
+                    print(formula)
+                    raise Exception
+    vocab = [tok for tok, count in c.items() if count >= min_count]
+    print("- done. {}/{} tokens added to vocab.".format(len(vocab), len(c)))
+    return sorted(vocab)
 
 
 def build_vocab(datasets, min_count=10):
@@ -132,13 +154,11 @@ def pad_batch_formulas(formulas, id_pad, id_end, max_len=None):
     if max_len is None:
         max_len = max(map(lambda x: len(x), formulas))
 
-    batch_formulas = id_pad * np.ones([len(formulas), max_len+1],
-            dtype=np.int32)
+    batch_formulas = id_pad * np.ones([len(formulas), max_len+1], dtype=np.int32)
     formula_length = np.zeros(len(formulas), dtype=np.int32)
     for idx, formula in enumerate(formulas):
-        batch_formulas[idx, :len(formula)] = np.asarray(formula,
-                dtype=np.int32)
-        batch_formulas[idx, len(formula)]  = id_end
+        batch_formulas[idx, :len(formula)] = np.asarray(formula, dtype=np.int32)
+        batch_formulas[idx, len(formula)] = id_end
         formula_length[idx] = len(formula) + 1
 
     return batch_formulas, formula_length

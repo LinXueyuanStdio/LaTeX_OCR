@@ -1,7 +1,6 @@
 import sys
 
 import numpy as np
-
 import tensorflow as tf
 import tensorflow.contrib.layers as layers
 
@@ -27,7 +26,6 @@ class Img2SeqModel(BaseModel):
         super(Img2SeqModel, self).__init__(config, dir_output)
         self._vocab = vocab
 
-
     def build_train(self, config):
         """Builds model"""
         self.logger.info("Building model...")
@@ -44,7 +42,6 @@ class Img2SeqModel(BaseModel):
 
         self.logger.info("- done.")
 
-
     def build_pred(self):
         self.logger.info("Building model...")
 
@@ -59,26 +56,23 @@ class Img2SeqModel(BaseModel):
 
         self.logger.info("- done.")
 
-
-
     def _add_placeholders_op(self):
         """
         Add placeholder attributes
         """
         # hyper params
         self.lr = tf.placeholder(tf.float32, shape=(), name='lr')
-        self.dropout = tf.placeholder(tf.float32, shape=(), name='dropout')
-        self.training = tf.placeholder(tf.bool, shape=(), name="training")
-
+        self.dropout = tf.placeholder(tf.float32, shape=(),   name='dropout')
+        self.training = tf.placeholder(tf.bool, shape=(),  name="training")
 
         # input of the graph
-        self.img = tf.placeholder(tf.uint8, shape=(None, None, None, 1), name='img')
-        self.formula = tf.placeholder(tf.int32, shape=(None, None), name='formula')
-        self.formula_length = tf.placeholder(tf.int32, shape=(None, ), name='formula_length')
+        self.img = tf.placeholder(tf.uint8, shape=(None, None, None, 1),  name='img')
+        self.formula = tf.placeholder(tf.int32, shape=(None, None),  name='formula')
+        self.formula_length = tf.placeholder(tf.int32, shape=(None, ),   name='formula_length')
 
         # tensorboard
-        tf.summary.scalar("lr", self.lr)
-
+        tf.summary.scalar("learning_rate", self.lr)
+        tf.summary.image("img", self.img)
 
     def _get_feed_dict(self, img, training, formula=None, lr=None, dropout=1):
         """Returns a dict"""
@@ -91,8 +85,7 @@ class Img2SeqModel(BaseModel):
         }
 
         if formula is not None:
-            formula, formula_length = pad_batch_formulas(formula,
-                    self._vocab.id_pad, self._vocab.id_end)
+            formula, formula_length = pad_batch_formulas(formula, self._vocab.id_pad, self._vocab.id_end)
             # print img.shape, formula.shape
             fd[self.formula] = formula
             fd[self.formula_length] = formula_length
@@ -101,21 +94,17 @@ class Img2SeqModel(BaseModel):
 
         return fd
 
-
     def _add_pred_op(self):
         """Defines self.pred"""
         encoded_img = self.encoder(self.training, self.img, self.dropout)
-        train, test = self.decoder(self.training, encoded_img, self.formula,
-                self.dropout)
+        train, test = self.decoder(self.training, encoded_img, self.formula, self.dropout)
 
         self.pred_train = train
-        self.pred_test  = test
-
+        self.pred_test = test
 
     def _add_loss_op(self):
         """Defines self.loss"""
-        losses = tf.nn.sparse_softmax_cross_entropy_with_logits(
-            logits=self.pred_train, labels=self.formula)
+        losses = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=self.pred_train, labels=self.formula)
 
         mask = tf.sequence_mask(self.formula_length)
         losses = tf.boolean_mask(losses, mask)
@@ -124,13 +113,13 @@ class Img2SeqModel(BaseModel):
         self.loss = tf.reduce_mean(losses)
 
         # # to compute perplexity for test
-        self.ce_words = tf.reduce_sum(losses) # sum of CE for each word
-        self.n_words = tf.reduce_sum(self.formula_length) # number of words
+        self.ce_words = tf.reduce_sum(losses)  # sum of CE for each word
+        self.n_words = tf.reduce_sum(self.formula_length)  # number of words
 
         # for tensorboard
         tf.summary.scalar("loss", self.loss)
-
-
+        tf.summary.scalar("sum_of_CE_for_each_word", self.ce_words)
+        tf.summary.scalar("number_of_words", self.n_words)
 
     def _run_epoch(self, config, train_set, val_set, epoch, lr_schedule):
         """Performs an epoch of training
@@ -155,31 +144,29 @@ class Img2SeqModel(BaseModel):
         # iterate over dataset
         for i, (img, formula) in enumerate(minibatches(train_set, batch_size)):
             # get feed dict
-            fd = self._get_feed_dict(img, training=True, formula=formula,
-                    lr=lr_schedule.lr, dropout=config.dropout)
+            fd = self._get_feed_dict(img, training=True, formula=formula, lr=lr_schedule.lr, dropout=config.dropout)
 
             # update step
-            _, loss_eval = self.sess.run([self.train_op, self.loss],
-                    feed_dict=fd)
-            prog.update(i + 1, [("loss", loss_eval), ("perplexity",
-                    np.exp(loss_eval)), ("lr", lr_schedule.lr)])
+            _, loss_eval = self.sess.run([self.train_op, self.loss], feed_dict=fd)
+            prog.update(i + 1, [("loss", loss_eval), ("perplexity", np.exp(loss_eval)), ("lr", lr_schedule.lr)])
 
             # update learning rate
             lr_schedule.update(batch_no=epoch*nbatches + i)
+
+            # 生成summary
+            summary_str = self.sess.run(self.merged, feed_dict=fd)
+            self.file_writer.add_summary(summary_str, epoch)  # 将summary 写入文件
 
         # logging
         self.logger.info("- Training: {}".format(prog.info))
 
         # evaluation
-        config_eval = Config({"dir_answers": self._dir_output + "formulas_val/",
-                "batch_size": config.batch_size})
+        config_eval = Config({"dir_answers": self._dir_output + "formulas_val/", "batch_size": config.batch_size})
         scores = self.evaluate(config_eval, val_set)
         score = scores[config.metric_val]
         lr_schedule.update(score=score)
 
         return score
-
-
 
     def write_prediction(self, config, test_set):
         """Performs an epoch of evaluation
@@ -200,35 +187,31 @@ class Img2SeqModel(BaseModel):
             refs, hyps = [], [[] for i in range(self._config.beam_size)]
 
         # iterate over the dataset
-        n_words, ce_words = 0, 0 # sum of ce for all words + nb of words
+        n_words, ce_words = 0, 0  # sum of ce for all words + nb of words
         for img, formula in minibatches(test_set, config.batch_size):
-            fd = self._get_feed_dict(img, training=False, formula=formula,
-                    dropout=1)
-            ce_words_eval, n_words_eval, ids_eval = self.sess.run(
-                    [self.ce_words, self.n_words, self.pred_test.ids],
-                    feed_dict=fd)
-
+            fd = self._get_feed_dict(img, training=False, formula=formula, dropout=1)
+            ce_words_eval, n_words_eval, ids_eval = self.sess.run([self.ce_words, self.n_words, self.pred_test.ids], feed_dict=fd)
+            print(ids_eval)
             # TODO(guillaume): move this logic into tf graph
             if self._config.decoding == "greedy":
                 ids_eval = np.expand_dims(ids_eval, axis=1)
 
             elif self._config.decoding == "beam_search":
                 ids_eval = np.transpose(ids_eval, [0, 2, 1])
-
+            print(ids_eval)
             n_words += n_words_eval
             ce_words += ce_words_eval
             for form, preds in zip(formula, ids_eval):
                 refs.append(form)
+                print(form, len(preds))
                 for i, pred in enumerate(preds):
                     hyps[i].append(pred)
 
-        files = write_answers(refs, hyps, self._vocab.id_to_tok,
-                config.dir_answers, self._vocab.id_end)
+        files = write_answers(refs, hyps, self._vocab.id_to_tok, config.dir_answers, self._vocab.id_end)
 
         perp = - np.exp(ce_words / float(n_words))
 
         return files, perp
-
 
     def _run_evaluate(self, config, test_set):
         """Performs an epoch of evaluation
@@ -247,7 +230,6 @@ class Img2SeqModel(BaseModel):
         scores["perplexity"] = perp
 
         return scores
-
 
     def predict_batch(self, images):
         if self._config.decoding == "greedy":
@@ -271,7 +253,6 @@ class Img2SeqModel(BaseModel):
                 hyps[i].append(p)
 
         return hyps
-
 
     def predict(self, img):
         preds = self.predict_batch([img])

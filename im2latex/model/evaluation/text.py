@@ -27,15 +27,15 @@ def score_files(path_ref, path_hyp):
     assert len(formulas_ref) == len(formulas_hyp)
 
     # tokenize
-    refs = [ref.split(' ') for _, ref in formulas_ref.items()]
-    hyps = [hyp.split(' ') for _, hyp in formulas_hyp.items()]
+    refs = [ref.split(" ") for _, ref in formulas_ref.items()]
+    hyps = [hyp.split(" ") for _, hyp in formulas_hyp.items()]
 
     # score
     return {
-            "BLEU-4": bleu_score(refs, hyps)*100,
-            "EM": exact_match_score(refs, hyps)*100,
-            "Edit": edit_distance(refs, hyps)*100
-            }
+        "NLTK-BLEU": bleu_score(refs, hyps)*100,
+        "ExactMatchScore": exact_match_score(refs, hyps)*100,
+        "EditDistance": edit_distance(refs, hyps)*100
+    }
 
 
 def exact_match_score(references, hypotheses):
@@ -68,9 +68,8 @@ def bleu_score(references, hypotheses):
         BLEU-4 score: (float)
 
     """
-    references = [[ref] for ref in references] # for corpus_bleu func
-    BLEU_4 = nltk.translate.bleu_score.corpus_bleu(references, hypotheses,
-        weights=(0.25, 0.25, 0.25, 0.25))
+    references = [[ref] for ref in references]  # for corpus_bleu func
+    BLEU_4 = nltk.translate.bleu_score.corpus_bleu(references, hypotheses, weights=(0.25, 0.25, 0.25, 0.25))
     return BLEU_4
 
 
@@ -130,17 +129,17 @@ def write_answers(references, hypotheses, rev_vocab, dir_name, id_end):
         return " ".join(s)
 
     def write_file(file_name, list_of_list):
+        print("writting file ", file_name)
         with open(file_name, "w") as f:
             for l in list_of_list:
                 f.write(ids_to_str(l) + "\n")
 
     init_dir(dir_name)
     file_names = [dir_name + "ref.txt"]
-    write_file(dir_name + "ref.txt", references) # one file for the ref
-    for i in range(len(hypotheses)):             # one file per hypo
+    write_file(dir_name + "ref.txt", references)  # one file for the ref
+    for i in range(len(hypotheses)):              # one file per hypo
         assert len(references) == len(hypotheses[i])
         write_file(dir_name + "hyp_{}.txt".format(i), hypotheses[i])
         file_names.append(dir_name + "hyp_{}.txt".format(i))
 
     return file_names
-

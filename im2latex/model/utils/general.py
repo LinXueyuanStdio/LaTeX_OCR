@@ -3,7 +3,8 @@ import numpy as np
 import time
 import logging
 import sys
-import subprocess, shlex
+import subprocess
+import shlex
 from shutil import copyfile
 import json
 from threading import Timer
@@ -41,7 +42,7 @@ def run(cmd, timeout_sec):
     timer = Timer(timeout_sec, kill_proc, [proc])
     try:
         timer.start()
-        stdout,stderr = proc.communicate()
+        stdout, stderr = proc.communicate()
     finally:
         timer.cancel()
 
@@ -54,7 +55,7 @@ def get_logger(filename):
     handler = logging.FileHandler(filename)
     handler.setLevel(logging.INFO)
     handler.setFormatter(logging.Formatter(
-            '%(asctime)s:%(levelname)s: %(message)s'))
+        '%(asctime)s:%(levelname)s: %(message)s'))
     logging.getLogger().addHandler(handler)
     return logger
 
@@ -102,12 +103,10 @@ class Config():
         else:
             self.load_json(source)
 
-
     def load_json(self, source):
         with open(source) as f:
             data = json.load(f)
             self.__dict__.update(data)
-
 
     def save(self, dir_name):
         init_dir(dir_name)
@@ -135,18 +134,15 @@ class Progbar(object):
         self.last_step = 0
 
         self.info = ""
-        self.bar  = ""
-
+        self.bar = ""
 
     def _update_values(self, curr_step, values):
         for k, v in values:
             if k not in self.sum_values:
-                self.sum_values[k] = [v * (curr_step - self.last_step),
-                        curr_step - self.last_step]
+                self.sum_values[k] = [v * (curr_step - self.last_step), curr_step - self.last_step]
             else:
                 self.sum_values[k][0] += v * (curr_step - self.last_step)
                 self.sum_values[k][1] += (curr_step - self.last_step)
-
 
     def _write_bar(self, curr_step):
         last_width = self.last_width
@@ -170,7 +166,6 @@ class Progbar(object):
 
         return bar
 
-
     def _get_eta(self, curr_step):
         now = time.time()
         if curr_step:
@@ -186,13 +181,11 @@ class Progbar(object):
 
         return info
 
-
     def _get_values_sum(self):
         info = ""
         for name, value in self.sum_values.items():
             info += ' - %s: %.4f' % (name, value[0] / max(1, value[1]))
         return info
-
 
     def _write_info(self, curr_step):
         info = ""
@@ -202,7 +195,6 @@ class Progbar(object):
         sys.stdout.write(info)
 
         return info
-
 
     def _update_width(self, curr_step):
         curr_width = len(self.bar) + len(self.info)
@@ -215,7 +207,6 @@ class Progbar(object):
         sys.stdout.flush()
 
         self.last_width = curr_width
-
 
     def update(self, curr_step, values):
         """Updates the progress bar.
