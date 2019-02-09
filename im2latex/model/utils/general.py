@@ -123,7 +123,7 @@ class Config():
 class Progbar(object):
     """Progbar class inspired by keras"""
 
-    def __init__(self, max_step, width=30):
+    def __init__(self, max_step, width=50):
         self.max_step = max_step
         self.width = width
         self.last_width = 0
@@ -184,7 +184,7 @@ class Progbar(object):
     def _get_values_sum(self):
         info = ""
         for name, value in self.sum_values.items():
-            info += ' - %s: %.4f' % (name, value[0] / max(1, value[1]))
+            info += ' - %s: %.6f' % (name, value[0] / max(1, value[1]))
         return info
 
     def _write_info(self, curr_step):

@@ -6,14 +6,14 @@
 
     "attn_cell_config": {
         "cell_type": "lstm",
-        "num_units": 512,
-        "dim_e"    : 512,
-        "dim_o"    : 512,
+        "num_units": 1024,
+        "dim_e"    : 1024,
+        "dim_o"    : 1024,
         "dim_embeddings": 80
     },
 
-    "decoding": "greedy",
-    "beam_size": 5,
+    "decoding": "beam_search",
+    "beam_size": 2,
     "div_gamma": 1,
     "div_prob": 0,
 

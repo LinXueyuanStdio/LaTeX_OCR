@@ -32,7 +32,7 @@ def score_files(path_ref, path_hyp):
 
     # score
     return {
-        "NLTK-BLEU": bleu_score(refs, hyps)*100,
+        "BLEU-4": bleu_score(refs, hyps)*100,
         "ExactMatchScore": exact_match_score(refs, hyps)*100,
         "EditDistance": edit_distance(refs, hyps)*100
     }

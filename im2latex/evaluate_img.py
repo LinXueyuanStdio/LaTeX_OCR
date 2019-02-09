@@ -45,7 +45,7 @@ def main(results):
 
     # score the repositories
     scores = score_dirs(images_ref, images_test, greyscale)
-    msg = " - ".join(["{} {:04.2f}".format(k, v) for k, v in scores.items()])
+    msg = " ... ".join(["{} is {:04.2f}".format(k, v) for k, v in scores.items()])
     model.logger.info("- Eval Img: {}".format(msg))
 
 

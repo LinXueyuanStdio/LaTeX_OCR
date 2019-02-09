@@ -75,17 +75,17 @@ class BaseModel(object):
         """Defines self.sess, self.saver and initialize the variables"""
         self.sess = tf.Session()
         self.sess.run(tf.global_variables_initializer())
-        self.saver = tf.train.Saver(max_to_keep=2)
-        dir_model_check_point = self._dir_output + "model.checkpoint/"
-        init_dir(dir_model_check_point)
-        self.ckeck_point = tf.train.latest_checkpoint(dir_model_check_point)
+        self.saver = tf.train.Saver(max_to_keep=1)
+        dir_model = self._dir_output + "model_weights/"
+        init_dir(dir_model)
+        self.ckeck_point = tf.train.latest_checkpoint(dir_model)
         print("checkpoint", self.ckeck_point)
         self.startepoch = 0
         if self.ckeck_point != None:
             self.saver.restore(self.sess, self.ckeck_point)
             idx = self.ckeck_point.find("-")
             self.startepoch = int(self.ckeck_point[idx+1:])
-            print("start from epoch ", self.startepoch)
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! find a checkpoint, start from epoch ", self.startepoch)
         self._add_summary()  # tensorboard 可视化
 
     def restore_session(self, dir_model):
@@ -99,14 +99,14 @@ class BaseModel(object):
         self.logger.info("Reloading the latest trained model...")
         self.saver.restore(self.sess, dir_model)
 
-    def save_session(self):
+    def save_session(self, epoch):
         """Saves session"""
         # check dir one last time
-        dir_model = self._dir_output + "model.weights/"
+        dir_model = self._dir_output + "model_weights/"
         init_dir(dir_model)
 
         self.logger.info("- Saving model...")
-        self.saver.save(self.sess, dir_model)
+        self.saver.save(self.sess, dir_model+"model.cpkt", global_step=epoch)
         self.logger.info("- Saved model in {}".format(dir_model))
 
     def close_session(self):
@@ -157,7 +157,7 @@ class BaseModel(object):
             if best_score is None or score >= best_score:
                 best_score = score
                 self.logger.info("- New best score ({:04.2f})!".format(best_score))
-                self.save_session()
+                self.save_session(epoch)
             if lr_schedule.stop_training:
                 self.logger.info("- Early Stopping.")
                 break
@@ -202,7 +202,7 @@ class BaseModel(object):
         """
         self.logger.info("- Evaluating...")
         scores = self._run_evaluate(config, test_set)  # evaluate
-        msg = " ... ".join([" {} {:04.2f} ".format(k, v) for k, v in scores.items()])
+        msg = " ... ".join([" {} is {:04.2f} ".format(k, v) for k, v in scores.items()])
         self.logger.info("- Eval: {}".format(msg))
 
         return scores

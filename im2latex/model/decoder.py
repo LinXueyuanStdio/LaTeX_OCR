@@ -61,9 +61,8 @@ class Decoder(object):
             if self._config.decoding == "greedy":
                 decoder_cell = GreedyDecoderCell(E, attn_cell, batch_size, start_token, self._id_end)
             elif self._config.decoding == "beam_search":
-                decoder_cell = BeamSearchDecoderCell(E, attn_cell, batch_size, start_token,
-                                                     self._id_end, self._config.beam_size,
-                                                     self._config.div_gamma, self._config.div_prob)
+                decoder_cell = BeamSearchDecoderCell(E, attn_cell, batch_size, start_token, self._id_end,
+                                                     self._config.beam_size, self._config.div_gamma, self._config.div_prob)
 
             test_outputs, _ = dynamic_decode(decoder_cell, self._config.max_length_formula+1)
 

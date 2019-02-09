@@ -43,7 +43,7 @@ def main(results):
     # score the ref and prediction files
     scores = score_files(formula_ref, formula_hyp)
     scores["perplexity"] = perplexity
-    msg = " - ".join(["{} {:04.2f}".format(k, v) for k, v in scores.items()])
+    msg = " ... ".join(["{} is {:04.2f}".format(k, v) for k, v in scores.items()])
     model.logger.info("- Test Txt: {}".format(msg))
 
 

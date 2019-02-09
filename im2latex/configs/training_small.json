@@ -2,8 +2,8 @@
     "export_name": "training.json",
 
     "lr_method"    : "Adam",
-    "n_epochs"     : 40,
-    "batch_size"   : 4,
+    "n_epochs"     : 150,
+    "batch_size"   : 1,
     "dropout"      : 1,
     "metric_val"   : "perplexity",
     "clip"         : -1,
