@@ -1,15 +1,13 @@
 from scipy.misc import imread
 import PIL
+import os
 from PIL import Image
-
+import numpy as np
 
 from model.img2seq import Img2SeqModel
 from model.utils.general import Config, run
 from model.utils.text import Vocab
-from model.utils.image import greyscale, crop_image, pad_image, \
-    downsample_image, TIMEOUT
-
-
+from model.utils.image import greyscale, crop_image, pad_image, downsample_image, TIMEOUT
 
 def interactive_shell(model):
     """Creates interactive shell to play with model
@@ -21,15 +19,11 @@ Enter a path to a file
 input> data/images_test/0.png""")
 
     while True:
-        try:
-            # for python 2
-            img_path = raw_input("input> ")
-        except NameError:
-            # for python 3
-            img_path = input("input> ")
+        # img_path = raw_input("input> ")# for python 2
+        img_path = input("input> ")# for python 3
 
-        if img_path == "exit":
-            break
+        if img_path == "exit" or img_path == "q":
+            break # 退出交互
 
         if img_path[-3:] == "png":
             img = imread(img_path)

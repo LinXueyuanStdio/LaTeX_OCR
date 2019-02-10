@@ -6,9 +6,9 @@
 
     "attn_cell_config": {
         "cell_type": "lstm",
-        "num_units": 1024,
-        "dim_e"    : 1024,
-        "dim_o"    : 1024,
+        "num_units": 512,
+        "dim_e"    : 256,
+        "dim_o"    : 512,
         "dim_embeddings": 80
     },
 

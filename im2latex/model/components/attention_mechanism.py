@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-
+ctx_vector = []
 class AttentionMechanism(object):
     """Class to compute attention over an image"""
 
@@ -12,10 +12,8 @@ class AttentionMechanism(object):
 
         Args:
             img: (tf.Tensor) image
-            dim_e: (int) dimension of the intermediary vector used to
-                compute attention
-            tiles: (int) default 1, input to context h may have size
-                    (tile * batch_size, ...)
+            dim_e: (int) dimension of the intermediary vector used to compute attention
+            tiles: (int) default 1, input to context h may have size (tile * batch_size, ...)
 
         """
         if len(img.shape) == 3:
@@ -37,11 +35,7 @@ class AttentionMechanism(object):
         self._scope_name = "att_mechanism"
 
         # attention vector over the image
-        self._att_img = tf.layers.dense(
-            inputs=self._img,
-            units=self._dim_e,
-            use_bias=False,
-            name="att_img")
+        self._att_img = tf.layers.dense(inputs=self._img, units=self._dim_e, use_bias=False, name="att_img")
 
 
     def context(self, h):
@@ -58,12 +52,10 @@ class AttentionMechanism(object):
             if self._tiles > 1:
                 att_img = tf.expand_dims(self._att_img, axis=1)
                 att_img = tf.tile(att_img, multiples=[1, self._tiles, 1, 1])
-                att_img = tf.reshape(att_img, shape=[-1, self._n_regions,
-                        self._dim_e])
+                att_img = tf.reshape(att_img, shape=[-1, self._n_regions, self._dim_e])
                 img = tf.expand_dims(self._img, axis=1)
                 img = tf.tile(img, multiples=[1, self._tiles, 1, 1])
-                img = tf.reshape(img, shape=[-1, self._n_regions,
-                        self._n_channels])
+                img = tf.reshape(img, shape=[-1, self._n_regions, self._n_channels])
             else:
                 att_img = self._att_img
                 img     = self._img
@@ -77,14 +69,32 @@ class AttentionMechanism(object):
 
             # computes scalar product with beta vector
             # works faster with a matmul than with a * and a tf.reduce_sum
-            att_beta = tf.get_variable("att_beta", shape=[self._dim_e, 1],
-                    dtype=tf.float32)
-            att_flat = tf.reshape(att, shape=[-1, self._dim_e])
+            att_beta = tf.get_variable("att_beta", shape=[self._dim_e, 1], dtype=tf.float32)
+            att_flat = tf.reshape(att, shape=[-1, self._dim_e]) # 扁平化
+
+            # --- debug
+
+            # --- debug
+
             e = tf.matmul(att_flat, att_beta)
             e = tf.reshape(e, shape=[-1, self._n_regions])
 
             # compute weights
             a = tf.nn.softmax(e)
+
+            # --- for visualize
+            def _debug_bkpt(val):
+                global ctx_vector
+                ctx_vector = []
+                ctx_vector += [val]
+                # print(ctx_vector)
+                return False
+
+            debug_print_op = tf.py_func(_debug_bkpt,[a], [tf.bool])
+            with tf.control_dependencies(debug_print_op):
+                a = tf.identity(a, name='a_for_visualize')
+            # --- for visualize
+
             a = tf.expand_dims(a, axis=-1)
             c = tf.reduce_sum(a * img, axis=1)
 
@@ -116,8 +126,7 @@ class AttentionMechanism(object):
         """Returns initial state of dimension specified by dim"""
         with tf.variable_scope(self._scope_name):
             img_mean = tf.reduce_mean(self._img, axis=1)
-            W = tf.get_variable("W_{}_0".format(name), shape=[self._n_channels,
-                    dim])
+            W = tf.get_variable("W_{}_0".format(name), shape=[self._n_channels, dim])
             b = tf.get_variable("b_{}_0".format(name), shape=[dim])
             h = tf.tanh(tf.matmul(img_mean, W) + b)
 

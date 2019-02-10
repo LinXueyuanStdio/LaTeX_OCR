@@ -206,7 +206,7 @@ class DataGenerator(object):
 
         return self._length
 
-    def build(self, quality=100, density=200, down_ratio=2, buckets=None, n_threads=4):
+    def build(self, quality=100, density=200, down_ratio=2, buckets=None, n_threads=10):
         """Generates images from the formulas and writes the correspondance
         in the matching file.
 
