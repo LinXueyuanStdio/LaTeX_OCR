@@ -109,6 +109,16 @@ class BaseModel(object):
         self.saver.save(self.sess, dir_model+"model.cpkt", global_step=epoch)
         self.logger.info("- Saved model in {}".format(dir_model))
 
+    def save_debug_session(self, epoch):
+        """Saves session"""
+        # check dir one last time
+        dir_model = self._dir_output + "debug_model_weights/"
+        init_dir(dir_model)
+
+        self.logger.info("- Saving model...")
+        self.saver.save(self.sess, dir_model+"model.cpkt", global_step=epoch)
+        self.logger.info("- Saved model in {}".format(dir_model))
+
     def close_session(self):
         """Closes the session"""
         self.sess.close()

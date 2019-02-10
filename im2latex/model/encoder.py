@@ -18,8 +18,7 @@ class Encoder(object):
 
         Args:
             training: (tf.placeholder) tf.bool
-            img: batch of img, shape = (?, height, width, channels), of type
-                tf.uint8
+            img: batch of img, shape = (?, height, width, channels), of type tf.uint8
 
         Returns:
             the encoded images, shape = (?, h', w', c')

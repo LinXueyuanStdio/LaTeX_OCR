@@ -2,14 +2,14 @@
     "export_name": "training.json",
 
     "lr_method"    : "Adam",
-    "n_epochs"     : 150,
-    "batch_size"   : 1,
+    "n_epochs"     : 10,
+    "batch_size"   : 20,
     "dropout"      : 1,
     "metric_val"   : "perplexity",
     "clip"         : -1,
 
-    "lr_init"      : 1e-3,
-    "lr_min"       : 1e-5,
+    "lr_init"      : 1e-2,
+    "lr_min"       : 1e-4,
     "start_decay"  : 6,
     "end_decay"    : 13,
     "lr_warm"      : 1e-3,
