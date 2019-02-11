@@ -75,6 +75,7 @@ class Img2SeqModel(BaseModel):
 
         # tensorboard
         tf.summary.scalar("learning_rate", self.lr)
+        tf.summary.scalar("dropout", self.dropout)
         tf.summary.image("img", self.img)
 
     def _get_feed_dict(self, img, training, formula=None, lr=None, dropout=1):
@@ -162,7 +163,7 @@ class Img2SeqModel(BaseModel):
 
             if (i+1) % 100 == 0:
                 # 太慢了，读了 100 批次后就保存先，保存的权重要用于调试 attention
-                self.save_debug_session(epoch)
+                self.save_debug_session(epoch, i)
 
         # logging
         self.logger.info("- Training: {}".format(prog.info))
@@ -204,14 +205,14 @@ class Img2SeqModel(BaseModel):
 
             elif self._config.decoding == "beam_search":
                 ids_eval = np.transpose(ids_eval, [0, 2, 1])
-            print("---------------------------------------------------------------after decoding :")
-            print(ids_eval)
+            # print("---------------------------------------------------------------after decoding :")
+            # print(ids_eval)
             n_words += n_words_eval
             ce_words += ce_words_eval
-            print("---------------------------------------------------------------formula and prediction :")
+            # print("---------------------------------------------------------------formula and prediction :")
             for form, preds in zip(formula, ids_eval):
                 refs.append(form)
-                print(form, "    ----------    ", preds[0])
+                # print(form, "    ----------    ", preds[0])
                 for i, pred in enumerate(preds):
                     hyps[i].append(pred)
 
@@ -271,7 +272,7 @@ class Img2SeqModel(BaseModel):
 
         return preds_
 
-    def predict(self, mode_name='test', batch_size=1, visualize=True):
+    def predict_vis(self, mode_name='test', batch_size=1, visualize=True):
         """predict with visualize attention
 
         Args:

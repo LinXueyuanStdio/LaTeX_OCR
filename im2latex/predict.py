@@ -39,8 +39,7 @@ input> data/images_test/0.png""")
 
             dir_output = "tmp/"
             name = img_path.split('/')[-1].split('.')[0]
-            run("magick convert -density {} -quality {} {} {}".format(200, 100,
-                img_path, dir_output+"{}.png".format(name)), TIMEOUT)
+            run("magick convert -density {} -quality {} {} {}".format(200, 100, img_path, dir_output+"{}.png".format(name)), TIMEOUT)
             img_path = dir_output + "{}.png".format(name)
             crop_image(img_path, img_path)
             pad_image(img_path, img_path, buckets=buckets)
@@ -57,13 +56,13 @@ input> data/images_test/0.png""")
 
 if __name__ == "__main__":
     # restore config and model
-    dir_output = "results/small/"
+    dir_output = "./results/small/"
     config_vocab = Config(dir_output + "vocab.json")
     config_model = Config(dir_output + "model.json")
     vocab = Vocab(config_vocab)
 
     model = Img2SeqModel(config_model, dir_output, vocab)
     model.build_pred()
-    model.restore_session(dir_output + "model.weights/")
+    model.restore_session(dir_output + "model_weights/")
 
     interactive_shell(model)

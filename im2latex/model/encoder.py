@@ -24,27 +24,30 @@ class Encoder(object):
             the encoded images, shape = (?, h', w', c')
 
         """
-        img = tf.cast(img, tf.float32) / 255.
+        img = tf.cast(img, tf.float32) - 128.
+        img = img / 128.
 
         with tf.variable_scope("convolutional_encoder"):
             # conv + max pool -> /2
             out = tf.layers.conv2d(img, 64, 3, 1, "SAME", activation=tf.nn.relu)
+            image_summary("out_1_layer", out)
             out = tf.layers.max_pooling2d(out, 2, 2, "SAME")
 
             # conv + max pool -> /2
             out = tf.layers.conv2d(out, 128, 3, 1, "SAME", activation=tf.nn.relu)
+            image_summary("out_2_layer", out)
             out = tf.layers.max_pooling2d(out, 2, 2, "SAME")
 
             # regular conv -> id
             out = tf.layers.conv2d(out, 256, 3, 1, "SAME", activation=tf.nn.relu)
-
+            image_summary("out_3_layer", out)
             out = tf.layers.conv2d(out, 256, 3, 1, "SAME", activation=tf.nn.relu)
-
+            image_summary("out_4_layer", out)
             if self._config.encoder_cnn == "vanilla":
                 out = tf.layers.max_pooling2d(out, (2, 1), (2, 1), "SAME")
 
             out = tf.layers.conv2d(out, 512, 3, 1, "SAME", activation=tf.nn.relu)
-
+            image_summary("out_5_layer", out)
             if self._config.encoder_cnn == "vanilla":
                 out = tf.layers.max_pooling2d(out, (1, 2), (1, 2), "SAME")
 
@@ -54,9 +57,17 @@ class Encoder(object):
 
             # conv
             out = tf.layers.conv2d(out, 512, 3, 1, "VALID", activation=tf.nn.relu)
-
+            image_summary("out_6_layer", out)
             if self._config.positional_embeddings:
                 # from tensor2tensor lib - positional embeddings
                 out = add_timing_signal_nd(out)
-
+                image_summary("out_7_layer", out)
         return out
+
+def image_summary(name_scope, tensor):
+    with tf.variable_scope(name_scope):
+        filter_count = tensor.shape[3]
+        for i in range(filter_count):
+            tf.summary.image("{}_{}".format(name_scope,i), tf.expand_dims(tensor[:,:,:,i], -1))
+            # tf.expand_dims(tensor[:,:,:,i], -1)
+            # Tensor must be 4-D with last dim 1, 3, or 4, not [50,320], so we need to use expand_dims

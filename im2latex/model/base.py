@@ -73,7 +73,7 @@ class BaseModel(object):
 
     def init_session(self):
         """Defines self.sess, self.saver and initialize the variables"""
-        self.sess = tf.Session()
+        self.sess = tf.Session() # config=tf.ConfigProto(log_device_placement=True))
         self.sess.run(tf.global_variables_initializer())
         self.saver = tf.train.Saver(max_to_keep=1)
         dir_model = self._dir_output + "model_weights/"
@@ -85,7 +85,7 @@ class BaseModel(object):
             self.saver.restore(self.sess, self.ckeck_point)
             idx = self.ckeck_point.find("-")
             self.startepoch = int(self.ckeck_point[idx+1:])
-            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! find a checkpoint, start from epoch ", self.startepoch)
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! find a checkpoint, load epoch", self.startepoch)
         self._add_summary()  # tensorboard 可视化
 
     def restore_session(self, dir_model):
@@ -109,14 +109,14 @@ class BaseModel(object):
         self.saver.save(self.sess, dir_model+"model.cpkt", global_step=epoch)
         self.logger.info("- Saved model in {}".format(dir_model))
 
-    def save_debug_session(self, epoch):
+    def save_debug_session(self, epoch, i):
         """Saves session"""
         # check dir one last time
         dir_model = self._dir_output + "debug_model_weights/"
         init_dir(dir_model)
 
         self.logger.info("- Saving model...")
-        self.saver.save(self.sess, dir_model+"model.cpkt", global_step=epoch)
+        self.saver.save(self.sess, dir_model+"model_"+str(i)+".cpkt", global_step=epoch)
         self.logger.info("- Saved model in {}".format(dir_model))
 
     def close_session(self):

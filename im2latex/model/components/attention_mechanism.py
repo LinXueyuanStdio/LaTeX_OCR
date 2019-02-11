@@ -83,20 +83,25 @@ class AttentionMechanism(object):
             a = tf.nn.softmax(e)
 
             # --- for visualize
+            def _vis_attention(tensor):
+                tf.summary.image("attention", tensor) # tf.expand_dims(tensor[:,:,:,i], -1))
             def _debug_bkpt(val):
                 global ctx_vector
                 ctx_vector = []
                 ctx_vector += [val]
                 # print(ctx_vector)
+                # print(len(ctx_vector), val.shape, val[:, :50])
                 return False
 
             debug_print_op = tf.py_func(_debug_bkpt,[a], [tf.bool])
             with tf.control_dependencies(debug_print_op):
                 a = tf.identity(a, name='a_for_visualize')
+            # _vis_attention(a)
             # --- for visualize
 
             a = tf.expand_dims(a, axis=-1)
             c = tf.reduce_sum(a * img, axis=1)
+            print("a.shape and img.shape", a.shape, img.shape)
 
             return c
 

@@ -37,8 +37,7 @@ class Decoder(object):
 
         """
         dim_embeddings = self._config.attn_cell_config.get("dim_embeddings")
-        E = tf.get_variable("E", initializer=embedding_initializer(),
-                            shape=[self._n_tok, dim_embeddings], dtype=tf.float32)
+        E = tf.get_variable("E", initializer=embedding_initializer(), shape=[self._n_tok, dim_embeddings], dtype=tf.float32)
 
         start_token = tf.get_variable("start_token", dtype=tf.float32, shape=[dim_embeddings], initializer=embedding_initializer())
 

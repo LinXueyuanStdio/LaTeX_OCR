@@ -66,8 +66,7 @@ class LRSchedule(object):
 
         # setup of exponential decay
         if self._end_decay is not None:
-            self._exp_decay = np.power(lr_min/lr_init,
-                    1/float(self._end_decay - self._start_decay))
+            self._exp_decay = np.power(lr_min/lr_init, 1/float(self._end_decay - self._start_decay))
 
 
     @property

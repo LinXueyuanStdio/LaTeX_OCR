@@ -61,8 +61,7 @@ class GreedyDecoderCell(object):
         # create new state of decoder
         new_output = DecoderOutput(logits, new_ids)
 
-        new_finished = tf.logical_or(finished, tf.equal(new_ids,
-                self._end_token))
+        new_finished = tf.logical_or(finished, tf.equal(new_ids, self._end_token))
 
         return (new_output, new_state, new_embedding, new_finished)
 
