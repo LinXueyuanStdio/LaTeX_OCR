@@ -64,7 +64,7 @@ class Encoder(object):
 
 def image_summary(name_scope, tensor):
     with tf.variable_scope(name_scope):
-        tf.summary.image("{}_{}".format(name_scope,0), tf.expand_dims(tensor[0,:,:,0], -1))
+        tf.summary.image("{}_{}".format(name_scope,0), tf.expand_dims(tf.expand_dims(tensor[0,:,:,0], 0), -1))
         # 磁盘炸了，只可视化一个
         # filter_count = tensor.shape[3]
         # for i in range(filter_count):

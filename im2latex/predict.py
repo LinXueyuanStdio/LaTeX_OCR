@@ -56,13 +56,13 @@ input> data/images_test/0.png""")
 
 if __name__ == "__main__":
     # restore config and model
-    dir_output = "./results/small/"
+    dir_output = "./results/full/"
     config_vocab = Config(dir_output + "vocab.json")
     config_model = Config(dir_output + "model.json")
     vocab = Vocab(config_vocab)
 
     model = Img2SeqModel(config_model, dir_output, vocab)
     model.build_pred()
-    model.restore_session(dir_output + "model_weights/")
+    # model.restore_session(dir_output + "model_weights/model.cpkt")
 
     interactive_shell(model)

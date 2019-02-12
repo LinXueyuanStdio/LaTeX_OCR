@@ -134,9 +134,26 @@ python evaluate_txt.py --results=results/full/
 python evaluate_img.py --results=results/full/
 ```
 
-## 4. Problems
+## 4. Cheatsheet
 
-### 4.1 理想情况下输出数据应该按照一定规规律随着输入数据的变化而变化的，但是训练到最后，无论输入数据是多，输出数据都是一个数值，loss在来回跳动，没有减小。
+### Visualize with tensorboard 可视化
+
+for small dataset:
+```
+cd results/small
+tensorboard --log-dir ./
+```
+
+for full dataset:
+
+```
+cd results/full
+tensorboard --log-dir ./
+```
+
+## 5. Problems
+
+### 5.1 理想情况下输出数据应该按照一定规规律随着输入数据的变化而变化的，但是训练到最后，无论输入数据是多，输出数据都是一个数值，loss在来回跳动，没有减小。
 
 遇到了这个问题，我的loss值最开始是在比较大的值上一直无法收敛，查看网络权值梯度，最开始的梯度返回已经是e-3级别了，因此网络基本没调整。
 
@@ -152,7 +169,7 @@ python evaluate_img.py --results=results/full/
 
 最后解决: 这不是过拟合，这™是欠拟合，训练多个epoch就行。
 
-### 4.2 attention 的可视化
+### 5.2 attention 的可视化
 
 想要这种效果：[https://github.com/ritheshkumar95/im2latex-tensorflow](https://github.com/ritheshkumar95/im2latex-tensorflow)
 

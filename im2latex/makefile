@@ -3,6 +3,7 @@ install-linux:
 	sudo apt-get install texlive-latex-base
 	sudo apt-get install texlive-latex-extra
 
+	sudo apt-get update
 	sudo apt-get install ghostscript
 	sudo apt-get install libgs-dev
 
