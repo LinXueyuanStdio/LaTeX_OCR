@@ -24,7 +24,7 @@ def main(results):
     vocab = Vocab(config_vocab)
     model = Img2SeqModel(config_model, dir_output, vocab)
     model.build_pred()
-    model.restore_session(dir_output + "model_weights/")
+    # model.restore_session(dir_output + "model_weights/")
 
     # load dataset
     test_set = DataGenerator(path_formulas=config_data.path_formulas_test,

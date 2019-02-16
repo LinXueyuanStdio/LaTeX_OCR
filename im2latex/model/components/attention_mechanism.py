@@ -28,12 +28,17 @@ class AttentionMechanism(object):
             raise NotImplementedError
 
         # dimensions
-        self._n_regions  = tf.shape(self._img)[1]
-        self._n_channels = self._img.shape[2].value
-        self._dim_e      = dim_e
-        self._tiles      = tiles
+        self._n_regions  = tf.shape(self._img)[1] # H*W
+        self._n_channels = self._img.shape[2].value # 由 decoder 决定 即卷积核个数 512
+        self._dim_e      = dim_e # 256
+        self._tiles      = tiles # 1 if config.decoding == "greedy" else config.beam_size
         self._scope_name = "att_mechanism"
 
+        # print(self._n_regions, self._n_channels, self._dim_e, self._tiles, img.shape)
+        # Tensor("attn_cell/strided_slice_4:0", shape=(), dtype=int32) 512 256 1 (?, ?, ?, 512)
+        # a.shape and img.shape (?, ?, 1) (?, ?, 512)
+        # Tensor("attn_cell_1/strided_slice_3:0", shape=(), dtype=int32) 512 256 2 (?, ?, ?, 512)
+        # a.shape and img.shape (?, ?, 1) (?, ?, 512)
         # attention vector over the image
         self._att_img = tf.layers.dense(inputs=self._img, units=self._dim_e, use_bias=False, name="att_img")
 
@@ -49,23 +54,29 @@ class AttentionMechanism(object):
 
         """
         with tf.variable_scope(self._scope_name):
-            if self._tiles > 1:
+            if self._tiles > 1: # self._tiles == config.beam_size
                 att_img = tf.expand_dims(self._att_img, axis=1)
                 att_img = tf.tile(att_img, multiples=[1, self._tiles, 1, 1])
-                att_img = tf.reshape(att_img, shape=[-1, self._n_regions, self._dim_e])
-                img = tf.expand_dims(self._img, axis=1)
-                img = tf.tile(img, multiples=[1, self._tiles, 1, 1])
-                img = tf.reshape(img, shape=[-1, self._n_regions, self._n_channels])
+                att_img = tf.reshape(att_img, shape=[-1, self._n_regions, self._dim_e]) # (tiles*batch, H*W, 256)
+                img = tf.expand_dims(self._img, axis=1) # 增加一维给 beam_search
+                img = tf.tile(img, multiples=[1, self._tiles, 1, 1]) # 在加的这一维上复制 beam_size 个一摸一样的
+                img = tf.reshape(img, shape=[-1, self._n_regions, self._n_channels]) # (tiles*batch, H*W, 512)
             else:
                 att_img = self._att_img
                 img     = self._img
 
+            # print(img.name, img.shape)
+            # print(att_img.name, att_img.shape)
             # computes attention over the hidden vector
             att_h = tf.layers.dense(inputs=h, units=self._dim_e, use_bias=False)
+            # print(h.name, h.shape)
+            # print(att_h.name, att_h.shape)
 
             # sums the two contributions
             att_h = tf.expand_dims(att_h, axis=1)
             att = tf.tanh(att_img + att_h)
+
+            # print(att.name, att.shape)
 
             # computes scalar product with beta vector
             # works faster with a matmul than with a * and a tf.reduce_sum
@@ -73,35 +84,50 @@ class AttentionMechanism(object):
             att_flat = tf.reshape(att, shape=[-1, self._dim_e]) # 扁平化
 
             # --- debug
-
+            # print(att_beta.name, att_beta.shape)
+            # print(att_flat.name, att_flat.shape)
             # --- debug
 
             e = tf.matmul(att_flat, att_beta)
             e = tf.reshape(e, shape=[-1, self._n_regions])
 
+            # print(e.name, e.shape)
+
             # compute weights
             a = tf.nn.softmax(e)
 
+            # print(a.name, a.shape)
+
             # --- for visualize
-            def _vis_attention(tensor):
-                tf.summary.image("attention", tensor) # tf.expand_dims(tensor[:,:,:,i], -1))
+            # 下个断点，检查 attention 以可视化
             def _debug_bkpt(val):
-                global ctx_vector
-                ctx_vector = []
-                ctx_vector += [val]
-                # print(ctx_vector)
-                # print(len(ctx_vector), val.shape, val[:, :50])
+                global ctx_vector # 用全局变量实现可视化
+
+                # TODO 下面的 if-else 会一直扩充 ctx_vector 可能导致 OOM
+                # TODO 训练时注意注释掉
+                # if not ctx_vector:
+                #     ctx_vector = [val]
+                # else:
+                #     ctx_vector += [val]
                 return False
 
-            debug_print_op = tf.py_func(_debug_bkpt,[a], [tf.bool])
+            debug_print_op = tf.py_func(_debug_bkpt, [a], [tf.bool]) # 自定义一个 op 输入是 [a] 输出类型是 [tf.bool]
             with tf.control_dependencies(debug_print_op):
+                # 声明 op 的执行依赖
+                # 即在执行下面这行代码前，必先执行  debug_print_op
                 a = tf.identity(a, name='a_for_visualize')
-            # _vis_attention(a)
             # --- for visualize
 
+            # print(a.name, a.shape)
+
             a = tf.expand_dims(a, axis=-1)
+
+            # print(a.name, a.shape)
             c = tf.reduce_sum(a * img, axis=1)
-            print("a.shape and img.shape", a.shape, img.shape)
+
+            # print(c.name, c.shape)
+
+            # print("a.shape and img.shape", a.shape, img.shape)
 
             return c
 

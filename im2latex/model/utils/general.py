@@ -123,7 +123,7 @@ class Config():
 class Progbar(object):
     """Progbar class inspired by keras"""
 
-    def __init__(self, max_step, width=50):
+    def __init__(self, max_step, width=30):
         self.max_step = max_step
         self.width = width
         self.last_width = 0

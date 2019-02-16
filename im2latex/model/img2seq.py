@@ -7,14 +7,14 @@ import tensorflow as tf
 import tensorflow.contrib.layers as layers
 from PIL import Image
 
-from .base import BaseModel
-from .decoder import Decoder
-from .encoder import Encoder
-from .evaluation.text import score_files, truncate_end, write_answers
-from .utils.general import Config, Progbar, minibatches
-from .utils.image import pad_batch_images
-from .utils.text import pad_batch_formulas
-from .components.attention_mechanism import ctx_vector
+import model.components.attention_mechanism
+from model.base import BaseModel
+from model.decoder import Decoder
+from model.encoder import Encoder
+from model.evaluation.text import score_files, truncate_end, write_answers
+from model.utils.general import Config, Progbar, minibatches
+from model.utils.image import pad_batch_images
+from model.utils.text import pad_batch_formulas
 
 class Img2SeqModel(BaseModel):
     """Specialized class for Img2Seq Model"""
@@ -27,6 +27,7 @@ class Img2SeqModel(BaseModel):
 
         """
         super(Img2SeqModel, self).__init__(config, dir_output)
+        model.components.attention_mechanism.ctx_vector = []
         self._vocab = vocab
 
     def build_train(self, config):
