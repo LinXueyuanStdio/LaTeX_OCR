@@ -27,6 +27,7 @@ class Encoder(object):
 
         with tf.variable_scope("convolutional_encoder"):
             # conv + max pool -> /2
+            # 64 个 3*3 filters, strike = (1, 1), output_img.shape = ceil(L/S) = ceil(input/strike) = (H, W)
             out = tf.layers.conv2d(img, 64, 3, 1, "SAME", activation=tf.nn.relu)
             image_summary("out_1_layer", out)
             out = tf.layers.max_pooling2d(out, 2, 2, "SAME")
