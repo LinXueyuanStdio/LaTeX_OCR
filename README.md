@@ -2,8 +2,9 @@
 
 Seq2Seq + Attention + Beam Search
 
-![](./art/visualization0.gif)
-![](./art/visualization1.gif)
+![](./art/visualization_6_short.gif)
+![](./art/visualization_12_short.gif)
+![](./art/visualization_14_short.gif)
 
 ## 1. 搭建环境
 
