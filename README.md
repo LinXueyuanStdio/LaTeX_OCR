@@ -1,9 +1,11 @@
 # LaTeX OCR
 
 Seq2Seq + Attention + Beam Search
-
+![](./art/6.png)
 ![](./art/visualization_6_short.gif)
+![](./art/12.png)
 ![](./art/visualization_12_short.gif)
+![](./art/14.png)
 ![](./art/visualization_14_short.gif)
 
 ## 1. 搭建环境
