@@ -1,159 +1,189 @@
-# Im2Latex
+# LaTeX OCR
 
-Seq2Seq model with Attention + Beam Search for Image to LaTeX.
+Seq2Seq + Attention + Beam Search
 
-Similar to [Show, Attend and Tell](https://arxiv.org/abs/1502.03044) and [Harvard's paper and dataset](http://lstm.seas.harvard.edu/latex/).
+![](./art/visualization0.gif)
+![](./art/visualization1.gif)
 
-Check the [blog post](https://guillaumegenthial.github.io/image-to-latex.html).
+## 1. 搭建环境
 
-## 1. Install
+1. python3.5 + tensorflow （latest）
+2. latex (latex 转 pdf)
+3. ghostscript
+4. magick (pdf 转 png)
 
-Any questoin when you run `make`, plz read the file `./makefile` for details.
+### Linux
 
-If you have installed, it means you are able to build the images from formulas by running latex render.
-
-Install pdflatex (latex to pdf) and ghostsript + [magick](https://www.imagemagick.org/script/install-source.php
-) (pdf to png) on Linux
-
-```
+一键安装
+```shell
 make install-linux
 ```
-
-(takes a while ~ 10 min, installs from source)
-
-On Mac, assuming you already have a LaTeX distribution installed, you should have pdflatex and ghostscript installed, so you just need to install magick. You can try
-
+或
+1. 安装本项目依赖
+```shell
+pip install -r requirements.txt
 ```
+2. 安装 latex (latex 转 pdf)
+```shell
+sudo apt-get install texlive-latex-base
+sudo apt-get install texlive-latex-extra
+```
+3. 安装 ghostscript
+```shell
+sudo apt-get update
+sudo apt-get install ghostscript
+sudo apt-get install libgs-dev
+```
+4. 安装[magick](https://www.imagemagick.org/script/install-source.php) (pdf 转 png)
+```shell
+wget http://www.imagemagick.org/download/ImageMagick.tar.gz
+tar -xvf ImageMagick.tar.gz
+cd ImageMagick-7.*; \
+./configure --with-gslib=yes; \
+make; \
+sudo make install; \
+sudo ldconfig /usr/local/lib
+rm ImageMagick.tar.gz
+rm -r ImageMagick-7.*
+```
+
+### Mac
+
+一键安装
+
+```shell
 make install-mac
 ```
 
-## 2. Getting Started
+或
+1. 安装本项目依赖
+```shell
+sudo pip install -r requirements.txt
+```
+2. LaTeX 请自行安装
 
-### Training on the small dataset
+3. 安装[magick](https://www.imagemagick.org/script/install-source.php) (pdf 转 png)
 
-it only needs 2 mins for building 100 images from the formulas you provide in `./data/small.formulas/`.
+```shell
+wget http://www.imagemagick.org/download/ImageMagick.tar.gz
+tar -xvf ImageMagick.tar.gz
+cd ImageMagick-7.*; \
+./configure --with-gslib=yes; \
+make;\
+sudo make install; \
+rm ImageMagick.tar.gz
+rm -r ImageMagick-7.*
+```
+## 2. 开始训练
 
-We provide a small dataset just to check the pipeline. To build the images, train the model and evaluate
+### 生成小数据集、训练、评价
+
+提供了样本量为 100 的小数据集，方便测试。只需 2 分钟就可以根据 `./data/small.formulas/` 下的公式生成用于训练的图片。
+
+一步训练
 
 ```
 make small
 ```
+或
 
-You should observe that the model starts to produce reasonable patterns of LaTeX after a few minutes.
+1. 生成数据集
 
-### Training on the full dataset
+   用 LaTeX 公式生成图片，同时保存公式-图片映射文件，生成字典 __只用运行一次__
 
-It needs hours for building 70,000+ images
+    ```shell
+    # 默认
+    python build.py
+    # 或者
+    python build.py --data=configs/data_small.json --vocab=configs/vocab_small.json
+    ```
 
-If you already did `make build` you can just train and evaluate the model with the following commands
+2. 训练
+    ```
+    # 默认
+    python train.py
+    # 或者
+    python train.py --data=configs/data_small.json --vocab=configs/vocab_small.json --training=configs/training_small.json --model=configs/model.json --output=results/small/
+    ```
 
-```
-make train
-make eval
-```
+3. 评价预测的公式
+    ```
+    # 默认
+    python evaluate_txt.py
+    # 或者
+    python evaluate_txt.py --results=results/small/
+    ```
 
-Or, to build the images from the formulas, train the model and evaluate, run
+4. 评价数学公式图片
+
+    ```
+    # 默认
+    python evaluate_img.py
+    # 或者
+    python evaluate_img.py --results=results/small/
+    ```
+
+
+### 生成完整数据集、训练、评价
+
+根据公式生成 70,000+ 数学公式图片需要 `2`-`3` 个小时
+
+一步训练
 
 ```
 make full
 ```
+或
 
+1. 生成数据集
 
-## 3. Details for you to debug
+   用 LaTeX 公式生成图片，同时保存公式-图片映射文件，生成字典 __只用运行一次__
+    ```
+    python build.py --data=configs/data.json --vocab=configs/vocab.json
+    ```
 
-### Training on the small dataset
+2. 训练
+    ```
+    python train.py --data=configs/data.json --vocab=configs/vocab.json --training=configs/training.json --model=configs/model.json --output=results/full/
+    ```
 
-1. Build the images from the formulas, write the matching file and extract the vocabulary. __Run only once__ for a dataset
+3. 评价预测的公式
+    ```
+    python evaluate_txt.py --results=results/full/
+    ```
 
-```
-python build.py
-```
+4. 评价数学公式图片
+    ```
+    python evaluate_img.py --results=results/full/
+    ```
+## 3. 可视化
 
-or
+### 可视化训练过程
 
-```
-python build.py --data=configs/data_small.json --vocab=configs/vocab_small.json
-```
+用 tensorboard 可视化训练过程
 
-1. Train
+小数据集
 
-```
-python train.py
-```
-
-or
-
-```
-python train.py --data=configs/data_small.json --vocab=configs/vocab_small.json --training=configs/training_small.json --model=configs/model.json --output=results/small/
-```
-
-1. Evaluate the text metrics
-
-```
-python evaluate_txt.py
-```
-
-or
-
-```
-python evaluate_txt.py --results=results/small/
-```
-
-1. Evaluate the image metrics
-
-```
-python evaluate_img.py
-```
-
-or
-
-```
-python evaluate_img.py --results=results/small/
-```
-
-
-### Training on the full dataset
-
-1. Build the images from the formulas, write the matching file and extract the vocabulary. __Run only once__ for a dataset
-```
-python build.py --data=configs/data.json --vocab=configs/vocab.json
-```
-
-2. Train
-```
-python train.py --data=configs/data.json --vocab=configs/vocab.json --training=configs/training.json --model=configs/model.json --output=results/full/
-```
-
-3. Evaluate the text metrics
-```
-python evaluate_txt.py --results=results/full/
-```
-
-4. Evaluate the image metrics
-```
-python evaluate_img.py --results=results/full/
-```
-
-## 4. Cheatsheet
-
-### Visualize with tensorboard 可视化
-
-for small dataset:
 ```
 cd results/small
 tensorboard --log-dir ./
 ```
 
-for full dataset:
+完整数据集
 
 ```
 cd results/full
 tensorboard --log-dir ./
 ```
+### 可视化预测过程
 
-## 5. Problems
+打开 `visualize_attention.ipynb`，一步步观察模型是如何预测 LaTeX 公式的。
 
-### 5.1 理想情况下输出数据应该按照一定规规律随着输入数据的变化而变化的，但是训练到最后，无论输入数据是多，输出数据都是一个数值，loss在来回跳动，没有减小。
+
+
+## 4. 踩坑记录
+
+### 理想情况下输出数据应该按照一定规规律随着输入数据的变化而变化的，但是训练到最后，无论输入数据是多，输出数据都是一个数值，loss在来回跳动，没有减小。
 
 遇到了这个问题，我的loss值最开始是在比较大的值上一直无法收敛，查看网络权值梯度，最开始的梯度返回已经是e-3级别了，因此网络基本没调整。
 
@@ -169,8 +199,14 @@ tensorboard --log-dir ./
 
 最后解决: 这不是过拟合，这™是欠拟合，训练多个epoch就行。
 
-### 5.2 attention 的可视化
 
-想要这种效果：[https://github.com/ritheshkumar95/im2latex-tensorflow](https://github.com/ritheshkumar95/im2latex-tensorflow)
 
-用全局变量做
+## 致谢
+
+论文：
+1. [Show, Attend and Tell](https://arxiv.org/abs/1502.03044)
+2. [Harvard's paper and dataset](http://lstm.seas.harvard.edu/latex/).
+
+博客：
+
+1. [blog post](https://guillaumegenthial.github.io/image-to-latex.html).

@@ -9,3 +9,5 @@ tmp/
 *.gz
 *.log
 *.sh
+*.zip
+*.7z
