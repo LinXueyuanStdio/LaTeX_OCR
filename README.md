@@ -179,7 +179,16 @@ tensorboard --log-dir ./
 
 打开 `visualize_attention.ipynb`，一步步观察模型是如何预测 LaTeX 公式的。
 
+或者运行
 
+```shell
+# 默认
+python visualize_attention.py
+# 或者
+python visualize_attention.py --image=data/images_test/6.png --vocab=configs/vocab.json --model=configs/model.json --output=results/full/
+```
+
+可在 `--output` 下生成预测过程的注意力图。
 
 ## 4. 踩坑记录
 
