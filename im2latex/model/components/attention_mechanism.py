@@ -105,10 +105,10 @@ class AttentionMechanism(object):
 
                 # TODO 下面的 if-else 会一直扩充 ctx_vector 可能导致 OOM
                 # TODO 训练时注意注释掉
-                # if not ctx_vector:
-                #     ctx_vector = [val]
-                # else:
-                #     ctx_vector += [val]
+                if not ctx_vector:
+                    ctx_vector = [val]
+                else:
+                    ctx_vector += [val]
                 return False
 
             debug_print_op = tf.py_func(_debug_bkpt, [a], [tf.bool]) # 自定义一个 op 输入是 [a] 输出类型是 [tf.bool]
