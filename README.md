@@ -169,14 +169,14 @@ make full
 
 ```
 cd results/small
-tensorboard --log-dir ./
+tensorboard --logdir ./
 ```
 
 完整数据集
 
 ```
 cd results/full
-tensorboard --log-dir ./
+tensorboard --logdir ./
 ```
 ### 可视化预测过程
 
@@ -193,7 +193,26 @@ python visualize_attention.py --image=data/images_test/6.png --vocab=configs/voc
 
 可在 `--output` 下生成预测过程的注意力图。
 
+## 4. 评价
+
+|      指标       | 训练分数 | 测试分数 |
+| :-------------: | :------: | :------: |
+|   perplexity    |   1.39   |   1.44   |
+|  EditDistance   |  81.68   |  80.45   |
+|     BLEU-4      |  78.21   |  75.42   |
+| ExactMatchScore |  13.93   |  12.44   |
+
+perplexity 是越接近1越好，其余3个指标是越大越好。ExactMatchScore 比较低，继续训练应该可以到 70 以上。机器不太好，训练太费时间了。
+
 ## 4. 踩坑记录
+
+### win10 用 GPU 加速训练
+
+装驱动后就行了。运行下面代码进行训练：
+
+```
+C:/Users/dlink/AppData/Local/Programs/Python/Python35/python.exe train.py --data=configs/data.json --vocab=configs/vocab.json --training=configs/training.json --model=configs/model.json --output=results/full/
+```
 
 ### 理想情况下输出数据应该按照一定规规律随着输入数据的变化而变化的，但是训练到最后，无论输入数据是多，输出数据都是一个数值，loss在来回跳动，没有减小。
 
@@ -221,4 +240,4 @@ python visualize_attention.py --image=data/images_test/6.png --vocab=configs/voc
 
 博客：
 
-1. [blog post](https://guillaumegenthial.github.io/image-to-latex.html).
+1. [Seq2Seq for LaTeX generation](https://guillaumegenthial.github.io/image-to-latex.html).
