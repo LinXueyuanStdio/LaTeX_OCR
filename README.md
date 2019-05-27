@@ -10,15 +10,15 @@
     * [可视化训练过程](#可视化训练过程)
     * [可视化预测过程](#可视化预测过程)
 * [4. 评价](#4-评价)
-* [5. 踩坑记录](#5-踩坑记录)
+* [5. 模型的具体实现细节](#5-模型的具体实现细节)
+    * [总述](#总述)
+    * [数据获取和数据处理](#数据获取和数据处理)
+    * [模型构建](#模型构建)
+* [6. 踩坑记录](#6-踩坑记录)
     * [win10 用 GPU 加速训练](#win10-用-gpu-加速训练)
     * [理想情况下输出数据应该按照一定规规律随着输入数据的变化而变化的，但是训练到最后，无论输入数据是多，输出数据都是一个数值，loss在来回跳动，
 没有减小。](#理想情况下输出数据应该按照一定规规律随着输入数据的变化而变化的但是训练到最后无论输入数据是多输出数据都是一个数值loss在来回跳动没有减小)
     * [如何可视化Attention层](#如何可视化attention层)
-* [6. 模型的具体实现细节](#6-模型的具体实现细节)
-    * [总述](#总述)
-    * [数据获取和数据处理](#数据获取和数据处理)
-    * [模型构建](#模型构建)
 * [致谢](#致谢)
 
 Seq2Seq + Attention + Beam Search
@@ -34,7 +34,7 @@ Seq2Seq + Attention + Beam Search
 
 1. python3.5 + tensorflow （latest）
 2. latex (latex 转 pdf)
-3. ghostscript
+3. ghostscript (图片处理)
 4. magick (pdf 转 png)
 
 ### Linux
@@ -226,39 +226,8 @@ python visualize_attention.py --image=data/images_test/6.png --vocab=configs/voc
 
 perplexity 是越接近1越好，其余3个指标是越大越好。ExactMatchScore 比较低，继续训练应该可以到 70 以上。机器不太好，训练太费时间了。
 
-## 5. 踩坑记录
 
-### win10 用 GPU 加速训练
-
-装驱动后就行了。运行下面代码进行训练：
-
-```
-C:/Users/dlink/AppData/Local/Programs/Python/Python35/python.exe train.py --data=configs/data.json --vocab=configs/vocab.json --training=configs/training.json --model=configs/model.json --output=results/full/
-```
-
-我的环境比较奇葩，是win10+ubuntu wsl，也就是windows+linux子系统。我的GPU驱动装在win里面了，linux里没装，不过文件系统是共用的，所以用win的GPU驱动来训练模型。（嗯，python也有两套版本哈哈哈，都是python3.5）
-
-### 理想情况下输出数据应该按照一定规规律随着输入数据的变化而变化的，但是训练到最后，无论输入数据是多，输出数据都是一个数值，loss在来回跳动，没有减小。
-
-遇到了这个问题，我的loss值最开始是在比较大的值上一直无法收敛，查看网络权值梯度，最开始的梯度返回已经是e-3级别了，因此网络基本没调整。
-
-目前知道的方法有：
-
-1. 初始化不对，查看每层网络的输入方差，如果方差越来越小，可以判定为初始化不对，而你的初始化也是采用的基本的高斯函数，有很大可能是初始化的问题；
-
-2. 采用BN（批量标准化），可以稍微降低初始化对网络的影响；
-
-3. 你的预测输出标签，而不是概率。如果你的数据是非常倾斜，1:20什么的，基本上不管怎么预测，预测标签都会是0。
-
-4. 你的模型层数比较多，激活函数都是一样的。可以试试两层、三层的，效果如何。也可以换个激活函数试试。
-
-最后解决: 这不是过拟合，这™是欠拟合，训练多个epoch就行。
-
-### 如何可视化Attention层
-
-在Attention层内自定义一个op，通过这个op把Attention传递到一个全局变量里。其他程序在模型预测完公式后，就可以在这个全局变量里获取到Attention。
-
-## 6. 模型的具体实现细节
+## 5. 模型的具体实现细节
 
 ### 总述
 
@@ -310,12 +279,44 @@ ghostscript和magick绑定在一起，用来把pdf转化为png格式的图片。
 
 让我鸽一段时间。。。有空再写！
 
+
+## 6. 踩坑记录
+
+### win10 用 GPU 加速训练
+
+装驱动后就行了。运行下面代码进行训练：
+
+```
+C:/Users/dlink/AppData/Local/Programs/Python/Python35/python.exe train.py --data=configs/data.json --vocab=configs/vocab.json --training=configs/training.json --model=configs/model.json --output=results/full/
+```
+
+我的环境比较奇葩，是win10+ubuntu wsl，也就是windows+linux子系统。我的GPU驱动装在win里面了，linux里没装，不过文件系统是共用的，所以用win的GPU驱动来训练模型。（嗯，python也有两套版本哈哈哈，都是python3.5）
+
+### 理想情况下输出数据应该按照一定规规律随着输入数据的变化而变化的，但是训练到最后，无论输入数据是多，输出数据都是一个数值，loss在来回跳动，没有减小。
+
+遇到了这个问题，我的loss值最开始是在比较大的值上一直无法收敛，查看网络权值梯度，最开始的梯度返回已经是e-3级别了，因此网络基本没调整。
+
+目前知道的方法有：
+
+1. 初始化不对，查看每层网络的输入方差，如果方差越来越小，可以判定为初始化不对，而你的初始化也是采用的基本的高斯函数，有很大可能是初始化的问题；
+
+2. 采用BN（批量标准化），可以稍微降低初始化对网络的影响；
+
+3. 你的预测输出标签，而不是概率。如果你的数据是非常倾斜，1:20什么的，基本上不管怎么预测，预测标签都会是0。
+
+4. 你的模型层数比较多，激活函数都是一样的。可以试试两层、三层的，效果如何。也可以换个激活函数试试。
+
+最后解决: 这不是过拟合，这™是欠拟合，训练多个epoch就行。
+
+### 如何可视化Attention层
+
+在Attention层内自定义一个op，通过这个op把Attention传递到一个全局变量里。其他程序在模型预测完公式后，就可以在这个全局变量里获取到Attention。
+
 ## 致谢
 
+十分感谢 Harvard 和 Guillaume Genthial 、Kelvin Xu 等人提供巨人的肩膀。
+
 论文：
-1. [Show, Attend and Tell](https://arxiv.org/abs/1502.03044)
-2. [Harvard's paper and dataset](http://lstm.seas.harvard.edu/latex/).
-
-博客：
-
+1. [Show, Attend and Tell(Kelvin Xu...)](https://arxiv.org/abs/1502.03044)
+2. [Harvard's paper and dataset](http://lstm.seas.harvard.edu/latex/)
 1. [Seq2Seq for LaTeX generation](https://guillaumegenthial.github.io/image-to-latex.html).
