@@ -39,27 +39,27 @@ def add_timing_signal_nd(x, min_timescale=1.0, max_timescale=1.0e4):
         a Tensor the same shape as x.
 
     """
-    static_shape = x.get_shape().as_list()
-    num_dims = len(static_shape) - 2
-    channels = tf.shape(x)[-1]
-    num_timescales = channels // (num_dims * 2)
+    static_shape = x.get_shape().as_list()  # [20, 14, 14, 512]
+    num_dims = len(static_shape) - 2  # 2
+    channels = tf.shape(x)[-1]  # 512
+    num_timescales = channels // (num_dims * 2)  # 512 // (2*2) = 128
     log_timescale_increment = (
         math.log(float(max_timescale) / float(min_timescale)) /
-        (tf.to_float(num_timescales) - 1))
+        (tf.to_float(num_timescales) - 1))  # -0.1 / 127
     inv_timescales = min_timescale * tf.exp(
-        tf.to_float(tf.range(num_timescales)) * -log_timescale_increment)
-    for dim in range(num_dims):
-        length = tf.shape(x)[dim + 1]
-        position = tf.to_float(tf.range(length))
+        tf.to_float(tf.range(num_timescales)) * -log_timescale_increment)  # len == 128
+    for dim in range(num_dims):  # dim == 0; 1
+        length = tf.shape(x)[dim + 1]  # 14
+        position = tf.to_float(tf.range(length))  # len == 14
         scaled_time = tf.expand_dims(position, 1) * tf.expand_dims(
-            inv_timescales, 0)
-        signal = tf.concat([tf.sin(scaled_time), tf.cos(scaled_time)], axis=1)
-        prepad = dim * 2 * num_timescales
-        postpad = channels - (dim + 1) * 2 * num_timescales
-        signal = tf.pad(signal, [[0, 0], [prepad, postpad]])
-        for _ in range(1 + dim):
+            inv_timescales, 0)  # pos = [14, 1], inv = [1, 128], scaled_time = [14, 128]
+        signal = tf.concat([tf.sin(scaled_time), tf.cos(scaled_time)], axis=1)  # [14, 256]
+        prepad = dim * 2 * num_timescales  # 0; 256
+        postpad = channels - (dim + 1) * 2 * num_timescales  # 512-(1;2)*2*128 = 256; 0
+        signal = tf.pad(signal, [[0, 0], [prepad, postpad]])  # [14, 512]
+        for _ in range(1 + dim):  # 1; 2
             signal = tf.expand_dims(signal, 0)
-        for _ in range(num_dims - 1 - dim):
+        for _ in range(num_dims - 1 - dim):  # 1, 0
             signal = tf.expand_dims(signal, -2)
-        x += signal
+        x += signal  # [1, 14, 1, 512]; [1, 1, 14, 512]
     return x

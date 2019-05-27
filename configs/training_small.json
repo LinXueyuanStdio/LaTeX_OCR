@@ -1,17 +1,18 @@
 {
     "export_name": "training.json",
-
-    "lr_method"    : "Adam",
-    "n_epochs"     : 330,
-    "batch_size"   : 1,
-    "dropout"      : 127,
-    "metric_val"   : "perplexity",
-    "clip"         : -1,
-
-    "lr_init"      : 1e-1,
-    "lr_min"       : 1e-4,
-    "start_decay"  : 6,
-    "end_decay"    : 13,
-    "lr_warm"      : 1e-3,
-    "end_warm"     : 0
+    "device": "cuda:0",
+    "criterion_method": "CrossEntropyLoss",
+    "metric_val": "perplexity",
+    "n_epochs": 330,
+    "batch_size": 1,
+    "dropout": 127,
+    "clip": -1,
+    "lr_method": "Adam",
+    "lr_scheduler": "CosineAnnealingLR",
+    "lr_init": 1e-1,
+    "lr_min": 1e-4,
+    "start_decay": 6,
+    "end_decay": 13,
+    "lr_warm": 1e-3,
+    "end_warm": 0
 }

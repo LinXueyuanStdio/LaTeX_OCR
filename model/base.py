@@ -1,8 +1,7 @@
 import os
-import sys
 import time
-import tensorflow as tf
 
+import tensorflow as tf
 
 from .utils.general import init_dir, get_logger
 
@@ -73,7 +72,7 @@ class BaseModel(object):
 
     def init_session(self):
         """Defines self.sess, self.saver and initialize the variables"""
-        self.sess = tf.Session() # config=tf.ConfigProto(log_device_placement=True))
+        self.sess = tf.Session()  # config=tf.ConfigProto(log_device_placement=True))
         self.sess.run(tf.global_variables_initializer())
         self.saver = tf.train.Saver(max_to_keep=1)
         dir_model = self._dir_output + "model_weights/"
