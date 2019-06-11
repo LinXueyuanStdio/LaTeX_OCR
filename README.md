@@ -22,7 +22,6 @@
 * [致谢](#致谢)
 
 Seq2Seq + Attention + Beam Search。
-Encoder 使用 CNN，Decoder 使用 Seq2Seq，Decoder 内部自定义了 Attention Cell，由 Attention 和 RNN 隐藏节点组装而成。最后的输出有 Beam Search 和 Greedy 两种方式。
 
 ![](./art/6.png)
 ![](./art/visualization_6_short.gif)
@@ -51,6 +50,8 @@ make install-linux
 或
 1. 安装本项目依赖
 ```shell
+virtualenv env35 --python=python3.5
+source env35/bin/activate
 pip install -r requirements.txt
 ```
 2. 安装 latex (latex 转 pdf)
