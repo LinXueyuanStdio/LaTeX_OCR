@@ -17,7 +17,7 @@ def main(results):
     # restore config and model
     dir_output = results
 
-    config_data  = Config(dir_output + "data.json")
+    config_data = Config(dir_output + "data.json")
     config_vocab = Config(dir_output + "vocab.json")
     config_model = Config(dir_output + "model.json")
 
@@ -28,22 +28,24 @@ def main(results):
 
     # load dataset
     test_set = DataGenerator(path_formulas=config_data.path_formulas_test,
-            dir_images=config_data.dir_images_test, img_prepro=greyscale,
-            max_iter=config_data.max_iter, bucket=config_data.bucket_test,
-            path_matching=config_data.path_matching_test,
-            max_len=config_data.max_length_formula,
-            form_prepro=vocab.form_prepro,)
+                             dir_images=config_data.dir_images_test,
+                             img_prepro=greyscale,
+                             max_iter=config_data.max_iter,
+                             bucket=config_data.bucket_test,
+                             path_matching=config_data.path_matching_test,
+                             max_len=config_data.max_length_formula,
+                             form_prepro=vocab.form_prepro,)
 
     # use model to write predictions in files
-    config_eval = Config({"dir_answers": dir_output + "formulas_test/",
-                          "batch_size": 20})
+    config_eval = Config({
+        "dir_answers": dir_output + "formulas_test/",
+        "batch_size": 20
+    })
     files, perplexity = model.write_prediction(config_eval, test_set)
-    formula_ref, formula_hyp = files[0], files[1]
-
-    # score the ref and prediction files
-    scores = score_files(formula_ref, formula_hyp)
+    scores = score_files(files[0], files[1])
     scores["perplexity"] = perplexity
-    msg = " ... ".join(["{} is {:04.2f}".format(k, v) for k, v in scores.items()])
+
+    msg = " || ".join(["{} is {:04.2f}".format(k, v) for k, v in scores.items()])
     model.logger.info("- Test Txt: {}".format(msg))
 
 
