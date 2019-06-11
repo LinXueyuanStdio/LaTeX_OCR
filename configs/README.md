@@ -1,3 +1,6 @@
+# 配置文件说明
+
+## 数据
 ```json
 {
     "export_name": "data.json",
@@ -29,6 +32,7 @@
         ] // 只支持以上大小的图片输入，如果输入的图片不是以上大小之一，就需要先 padding 成以上大小
 }
 ```
+## 模型
 ```json
 {
     "export_name": "model.json",
@@ -53,7 +57,7 @@
     "max_length_formula": 150 // 最大公式长度
 }
 ```
-
+## 训练过程（超参数）
 ```json
 {
     "export_name": "training.json",
@@ -76,7 +80,7 @@
     "end_warm": 2
 }
 ```
-
+## 字典
 ```json
 {
 	"export_name": "vocab.json",

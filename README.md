@@ -21,7 +21,8 @@
     * [如何可视化Attention层](#如何可视化attention层)
 * [致谢](#致谢)
 
-Seq2Seq + Attention + Beam Search。Encoder 使用 CNN，Decoder 使用 RNN（LSTM 或 GRU解决梯度爆炸），自定义Attention Cell，把 Attention 和 RNN 隐藏节点 组装成
+Seq2Seq + Attention + Beam Search。
+Encoder 使用 CNN，Decoder 使用 Seq2Seq，Decoder 内部自定义了 Attention Cell，由 Attention 和 RNN 隐藏节点组装而成。最后的输出有 Beam Search 和 Greedy 两种方式。
 
 ![](./art/6.png)
 ![](./art/visualization_6_short.gif)
@@ -30,9 +31,13 @@ Seq2Seq + Attention + Beam Search。Encoder 使用 CNN，Decoder 使用 RNN（LS
 ![](./art/14.png)
 ![](./art/visualization_14_short.gif)
 
+结构
+
+![](./art/architecture.jpg)
+
 ## 1. 搭建环境
 
-1. python3.5 + tensorflow （latest）
+1. python3.5 + tensorflow1.12.2
 2. latex (latex 转 pdf)
 3. ghostscript (图片处理)
 4. magick (pdf 转 png)
