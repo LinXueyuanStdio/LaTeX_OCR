@@ -16,6 +16,7 @@ from model.utils.general import Config, Progbar, minibatches
 from model.utils.image import pad_batch_images
 from model.utils.text import pad_batch_formulas
 
+
 class Img2SeqModel(BaseModel):
     """Specialized class for Img2Seq Model"""
 
@@ -33,60 +34,101 @@ class Img2SeqModel(BaseModel):
     def build_train(self, config):
         """Builds model"""
         self.logger.info("Building model...")
-
-        self.encoder = Encoder(self._config)
-        self.decoder = Decoder(self._config, self._vocab.n_tok, self._vocab.id_end)
-
-        self._add_placeholders_op()
-        self._add_pred_op()
-        self._add_loss_op()
-
-        self._add_train_op(config.lr_method, self.lr, self.loss, config.clip)
+        self.build_base_component()
+        self.add_optimizer(config.lr_method, self.lr, self.loss, config.clip)
         self.init_session()
-
         self.logger.info("- done.")
 
     def build_pred(self):
         self.logger.info("Building model...")
-
-        self.encoder = Encoder(self._config)
-        self.decoder = Decoder(self._config, self._vocab.n_tok, self._vocab.id_end)
-
-        self._add_placeholders_op()
-        self._add_pred_op()
-        self._add_loss_op()
-
+        self.build_base_component()
         self.init_session()
-
         self.logger.info("- done.")
 
-    def _add_placeholders_op(self):
-        """
-        Add placeholder attributes
-        """
+    def build_base_component(self):
         # hyper params
-        self.lr = tf.placeholder(tf.float32, shape=(), name='lr')
+        self.lr = tf.placeholder(tf.float32, shape=(), name='lr')  # learning rate
         self.dropout = tf.placeholder(tf.float32, shape=(),   name='dropout')
-        self.training = tf.placeholder(tf.bool, shape=(),  name="training")
 
         # input of the graph
         self.img = tf.placeholder(tf.uint8, shape=(None, None, None, 1),  name='img')
         self.formula = tf.placeholder(tf.int32, shape=(None, None),  name='formula')
         self.formula_length = tf.placeholder(tf.int32, shape=(None, ),   name='formula_length')
 
+        # self.pred_train, self.pred_test
+        # tensorflow 只有静态计算图，只好同时把 train 和 test 部分的计算图都建了
+        self.encoder = Encoder(self._config)
+        self.decoder = Decoder(self._config, self._vocab.n_tok, self._vocab.id_end)
+        encoded_img = self.encoder(self.img, self.dropout)
+        train, test = self.decoder(encoded_img, self.formula, self.dropout)
+        self.pred_train = train
+        self.pred_test = test
+
+        # self.loss
+        losses = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=self.pred_train, labels=self.formula)
+        mask = tf.sequence_mask(self.formula_length)
+        losses = tf.boolean_mask(losses, mask)
+        self.loss = tf.reduce_mean(losses)
+
+        # to compute perplexity for test
+        self.ce_words = tf.reduce_sum(losses)  # sum of CE for each word
+        self.n_words = tf.reduce_sum(self.formula_length)  # number of words
+
         # tensorboard
         tf.summary.scalar("learning_rate", self.lr)
         tf.summary.scalar("dropout", self.dropout)
         tf.summary.image("img", self.img)
+        tf.summary.scalar("loss", self.loss)
+        tf.summary.scalar("sum_of_CE_for_each_word", self.ce_words)
+        tf.summary.scalar("number_of_words", self.n_words)
 
-    def _get_feed_dict(self, img, training, formula=None, lr=None, dropout=1):
-        """Returns a dict"""
+    def add_optimizer(self, lr_method, lr, loss, clip=-1):
+        """Defines self.train_op that performs an update on a batch
+
+        Args:
+            lr_method: (string) sgd method, for example "adam"
+            lr: (tf.placeholder) tf.float32, learning rate
+            loss: (tensor) tf.float32 loss to minimize
+            clip: (python float) clipping of gradient. If < 0, no clipping
+
+
+        """
+        _lr_m = lr_method.lower()  # lower to make sure
+
+        with tf.variable_scope("train_step"):
+            # sgd method 优化器
+            if _lr_m == 'adam':
+                optimizer = tf.train.AdamOptimizer(lr)
+            elif _lr_m == 'adagrad':
+                optimizer = tf.train.AdagradOptimizer(lr)
+            elif _lr_m == 'sgd':
+                optimizer = tf.train.GradientDescentOptimizer(lr)
+            elif _lr_m == 'rmsprop':
+                optimizer = tf.train.RMSPropOptimizer(lr)
+            else:
+                raise NotImplementedError("Unknown method {}".format(_lr_m))
+
+            # for batch norm beta gamma
+            update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
+            with tf.control_dependencies(update_ops):
+                if clip > 0:
+                    # gradient clipping if clip is positive, defaults -1
+                    # 梯度裁剪 (gradient clipping) 用于解决梯度爆炸 (gradient explosion) 问题
+                    # 另外，与 grdient explosion 相反的问题 gradient vanishing 的做法跟 grdient explosion 不同
+                    # gradient vanishing 一般是采用 LSTM 或 GRU 这类有记忆的 RNN 单元
+                    grads, vs = zip(*optimizer.compute_gradients(loss))
+                    grads, gnorm = tf.clip_by_global_norm(grads, clip)
+                    self.train_op = optimizer.apply_gradients(zip(grads, vs))
+                else:
+                    self.train_op = optimizer.minimize(loss)
+
+    def _get_feed_dict(self, img, formula=None, lr=None, dropout=1):
+        """Returns a dict 网络的输入"""
         img = pad_batch_images(img)
 
         fd = {
             self.img: img,
             self.dropout: dropout,
-            self.training: training,
         }
 
         if formula is not None:
@@ -99,34 +141,7 @@ class Img2SeqModel(BaseModel):
 
         return fd
 
-    def _add_pred_op(self):
-        """Defines self.pred"""
-        encoded_img = self.encoder(self.training, self.img, self.dropout)
-        train, test = self.decoder(self.training, encoded_img, self.formula, self.dropout)
-
-        self.pred_train = train
-        self.pred_test = test
-
-    def _add_loss_op(self):
-        """Defines self.loss"""
-        losses = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=self.pred_train, labels=self.formula)
-
-        mask = tf.sequence_mask(self.formula_length)
-        losses = tf.boolean_mask(losses, mask)
-
-        # loss for training
-        self.loss = tf.reduce_mean(losses)
-
-        # # to compute perplexity for test
-        self.ce_words = tf.reduce_sum(losses)  # sum of CE for each word
-        self.n_words = tf.reduce_sum(self.formula_length)  # number of words
-
-        # for tensorboard
-        tf.summary.scalar("loss", self.loss)
-        tf.summary.scalar("sum_of_CE_for_each_word", self.ce_words)
-        tf.summary.scalar("number_of_words", self.n_words)
-
-    def _run_epoch(self, config, train_set, val_set, epoch, lr_schedule):
+    def _run_train(self, config, train_set, val_set, epoch, lr_schedule):
         """Performs an epoch of training
 
         Args:
@@ -137,8 +152,7 @@ class Img2SeqModel(BaseModel):
             lr_schedule: LRSchedule instance that takes care of learning proc
 
         Returns:
-            score: (float) model will select weights that achieve the highest
-                score
+            score: (float) model will select weights that achieve the highest score
 
         """
         # logging
@@ -149,7 +163,7 @@ class Img2SeqModel(BaseModel):
         # iterate over dataset
         for i, (img, formula) in enumerate(minibatches(train_set, batch_size)):
             # get feed dict
-            fd = self._get_feed_dict(img, training=True, formula=formula, lr=lr_schedule.lr, dropout=config.dropout)
+            fd = self._get_feed_dict(img, formula=formula, lr=lr_schedule.lr, dropout=config.dropout)
 
             # update step
             _, loss_eval = self.sess.run([self.train_op, self.loss], feed_dict=fd)
@@ -159,8 +173,9 @@ class Img2SeqModel(BaseModel):
             lr_schedule.update(batch_no=epoch*nbatches + i)
 
             # 生成summary
-            summary_str = self.sess.run(self.merged, feed_dict=fd)
-            self.file_writer.add_summary(summary_str, epoch)  # 将summary 写入文件
+            if (i+1) % 100 == 0:
+                summary_str = self.sess.run(self.merged, feed_dict=fd)
+                self.file_writer.add_summary(summary_str, epoch)  # 将summary 写入文件
 
             # if (i+1) % 100 == 0:
             #     # 太慢了，读了 100 批次后就保存先，保存的权重要用于调试 attention
@@ -170,12 +185,32 @@ class Img2SeqModel(BaseModel):
         self.logger.info("- Training: {}".format(prog.info))
 
         # evaluation
-        config_eval = Config({"dir_answers": self._dir_output + "formulas_val/", "batch_size": config.batch_size})
+        config_eval = Config({
+            "dir_answers": self._dir_output + "formulas_val/",
+            "batch_size": config.batch_size
+        })
         scores = self.evaluate(config_eval, val_set)
         score = scores[config.metric_val]
         lr_schedule.update(score=score)
 
         return score
+
+    def _run_evaluate(self, config, test_set):
+        """Performs an epoch of evaluation
+
+        Args:
+            test_set: Dataset instance
+            config: (Config) with batch_size and dir_answers
+
+        Returns:
+            scores: (dict) scores["acc"] = 0.85 for instance
+
+        """
+        files, perp = self.write_prediction(config, test_set)
+        scores = score_files(files[0], files[1])
+        scores["perplexity"] = perp
+
+        return scores
 
     def write_prediction(self, config, test_set):
         """Performs an epoch of evaluation
@@ -195,25 +230,20 @@ class Img2SeqModel(BaseModel):
         elif self._config.decoding == "beam_search":
             refs, hyps = [], [[] for i in range(self._config.beam_size)]
 
-        # iterate over the dataset
         n_words, ce_words = 0, 0  # sum of ce for all words + nb of words
         for img, formula in minibatches(test_set, config.batch_size):
-            fd = self._get_feed_dict(img, training=False, formula=formula, dropout=1)
+            fd = self._get_feed_dict(img, formula=formula, dropout=1)
             ce_words_eval, n_words_eval, ids_eval = self.sess.run([self.ce_words, self.n_words, self.pred_test.ids], feed_dict=fd)
-            # TODO(guillaume): move this logic into tf graph
+
             if self._config.decoding == "greedy":
                 ids_eval = np.expand_dims(ids_eval, axis=1)
-
             elif self._config.decoding == "beam_search":
                 ids_eval = np.transpose(ids_eval, [0, 2, 1])
-            # print("---------------------------------------------------------------after decoding :")
-            # print(ids_eval)
             n_words += n_words_eval
             ce_words += ce_words_eval
-            # print("---------------------------------------------------------------formula and prediction :")
+
             for form, preds in zip(formula, ids_eval):
                 refs.append(form)
-                # print(form, "    ----------    ", preds[0])
                 for i, pred in enumerate(preds):
                     hyps[i].append(pred)
 
@@ -223,36 +253,17 @@ class Img2SeqModel(BaseModel):
 
         return files, perp
 
-    def _run_evaluate(self, config, test_set):
-        """Performs an epoch of evaluation
-
-        Args:
-            test_set: Dataset instance
-            params: (dict) with extra params in it
-                - "dir_name": (string)
-
-        Returns:
-            scores: (dict) scores["acc"] = 0.85 for instance
-
-        """
-        files, perp = self.write_prediction(config, test_set)
-        scores = score_files(files[0], files[1])
-        scores["perplexity"] = perp
-
-        return scores
-
     def predict_batch(self, images):
         if self._config.decoding == "greedy":
             hyps = [[]]
         elif self._config.decoding == "beam_search":
             hyps = [[] for i in range(self._config.beam_size)]
 
-        fd = self._get_feed_dict(images, training=False, dropout=1)
+        fd = self._get_feed_dict(images, dropout=1)
         ids_eval, = self.sess.run([self.pred_test.ids], feed_dict=fd)
 
         if self._config.decoding == "greedy":
             ids_eval = np.expand_dims(ids_eval, axis=1)
-
         elif self._config.decoding == "beam_search":
             ids_eval = np.transpose(ids_eval, [0, 2, 1])
 

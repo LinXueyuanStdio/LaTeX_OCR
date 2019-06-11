@@ -21,11 +21,10 @@ class Decoder(object):
         self._id_end = id_end
         self._tiles = 1 if config.decoding == "greedy" else config.beam_size
 
-    def __call__(self, training, img, formula, dropout):
+    def __call__(self, img, formula, dropout):
         """Decodes an image into a sequence of token
 
         Args:
-            training: (tf.placeholder) bool
             img: encoded image (tf.Tensor) shape = (N, H, W, C) (N, H/2/2/2-2, W/2/2/2-2, 512)
             formula: (tf.placeholder), shape = (N, T)
 
@@ -45,7 +44,6 @@ class Decoder(object):
 
         batch_size = tf.shape(img)[0]
 
-        # training
         with tf.variable_scope("attn_cell", reuse=False):
             embeddings = get_embeddings(formula, E, dim_embeddings,  start_token, batch_size)  # (N, T, dim_embedding)
             attn_meca = AttentionMechanism(img, self._config.attn_cell_config["dim_e"])

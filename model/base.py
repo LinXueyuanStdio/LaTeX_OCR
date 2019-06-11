@@ -20,55 +20,15 @@ class BaseModel(object):
         self._dir_output = dir_output
         init_dir(self._dir_output)
         self.logger = get_logger(self._dir_output + "model.log")
-        tf.reset_default_graph()  # saveguard if previous model was defined
+        tf.reset_default_graph()  # save guard if previous model was defined
 
     def build_train(self, config=None):
-        """To overwrite with model-specific logic
-
-        This logic must define
-            - self.loss
-            - self.lr
-            - etc.
-        """
+        """To overwrite with model-specific logic"""
         raise NotImplementedError
 
     def build_pred(self, config=None):
         """Similar to build_train but no need to define train_op"""
         raise NotImplementedError
-
-    def _add_train_op(self, lr_method, lr, loss, clip=-1):
-        """Defines self.train_op that performs an update on a batch
-
-        Args:
-            lr_method: (string) sgd method, for example "adam"
-            lr: (tf.placeholder) tf.float32, learning rate
-            loss: (tensor) tf.float32 loss to minimize
-            clip: (python float) clipping of gradient. If < 0, no clipping
-
-        """
-        _lr_m = lr_method.lower()  # lower to make sure
-
-        with tf.variable_scope("train_step"):
-            if _lr_m == 'adam':  # sgd method
-                optimizer = tf.train.AdamOptimizer(lr)
-            elif _lr_m == 'adagrad':
-                optimizer = tf.train.AdagradOptimizer(lr)
-            elif _lr_m == 'sgd':
-                optimizer = tf.train.GradientDescentOptimizer(lr)
-            elif _lr_m == 'rmsprop':
-                optimizer = tf.train.RMSPropOptimizer(lr)
-            else:
-                raise NotImplementedError("Unknown method {}".format(_lr_m))
-
-            # for batch norm beta gamma
-            update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
-            with tf.control_dependencies(update_ops):
-                if clip > 0:  # gradient clipping if clip is positive
-                    grads, vs = zip(*optimizer.compute_gradients(loss))
-                    grads, gnorm = tf.clip_by_global_norm(grads, clip)
-                    self.train_op = optimizer.apply_gradients(zip(grads, vs))
-                else:
-                    self.train_op = optimizer.minimize(loss)
 
     def init_session(self):
         """Defines self.sess, self.saver and initialize the variables"""
@@ -84,7 +44,7 @@ class BaseModel(object):
             self.saver.restore(self.sess, self.ckeck_point)
             idx = self.ckeck_point.find("-")
             self.startepoch = int(self.ckeck_point[idx+1:])
-            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! find a checkpoint, load epoch", self.startepoch)
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! find a checkpoint, load epoch ", self.startepoch)
         self._add_summary()  # tensorboard 可视化
 
     def restore_session(self, dir_model):
@@ -160,7 +120,7 @@ class BaseModel(object):
             self.logger.info("Epoch {:}/{:}".format(epoch+1, config.n_epochs))
 
             # epoch
-            score = self._run_epoch(config, train_set, val_set, epoch, lr_schedule)
+            score = self._run_train(config, train_set, val_set, epoch, lr_schedule)
 
             # save weights if we have new best score on eval
             if best_score is None or score >= best_score:
@@ -177,7 +137,7 @@ class BaseModel(object):
 
         return best_score
 
-    def _run_epoch(config, train_set, val_set, epoch, lr_schedule):
+    def _run_train(config, train_set, val_set, epoch, lr_schedule):
         """Model_specific method to overwrite
 
         Performs an epoch of training
@@ -190,8 +150,7 @@ class BaseModel(object):
             lr_schedule: LRSchedule instance that takes care of learning proc
 
         Returns:
-            score: (float) model will select weights that achieve the highest
-                score
+            score: (float) model will select weights that achieve the highest score
 
         """
         raise NotImplementedError
@@ -210,8 +169,8 @@ class BaseModel(object):
 
         """
         self.logger.info("- Evaluating...")
-        scores = self._run_evaluate(config, test_set)  # evaluate
-        msg = " ... ".join([" {} is {:04.2f} ".format(k, v) for k, v in scores.items()])
+        scores = self._run_evaluate(config, test_set)
+        msg = " || ".join([" {} is {:04.2f} ".format(k, v) for k, v in scores.items()])
         self.logger.info("- Eval: {}".format(msg))
 
         return scores

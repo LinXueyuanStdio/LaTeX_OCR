@@ -14,10 +14,9 @@ class Encoder(object):
         self._config = config
 
 
-    def __call__(self, training, img, dropout):
+    def __call__(self, img, dropout):
         """Applies convolutions to the image
         Args:
-            training: (tf.placeholder) tf.bool
             img: batch of img, shape = (?, height, width, channels), of type tf.uint8
         Returns:
             the encoded images, shape = (?, h', w', c')
@@ -59,6 +58,9 @@ class Encoder(object):
             image_summary("out_6_layer", out)
             if self._config.positional_embeddings:
                 # from tensor2tensor lib - positional embeddings
+                # 嵌入位置信息（positional）
+                # 后面将会有一个flatten的过程，会丢失掉位置信息，所以现在必须把位置信息嵌入
+                # 嵌入的方法有很多，比如加，乘，缩放等等，这里用 tensor2tensor 的实现
                 out = add_timing_signal_nd(out)
                 image_summary("out_7_layer", out)
         return out
