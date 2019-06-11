@@ -1,3 +1,5 @@
+.ipynb_checkpoints/
+.vscode/
 data/
 results/
 tmp/
