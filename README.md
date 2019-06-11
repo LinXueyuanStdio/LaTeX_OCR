@@ -21,7 +21,7 @@
     * [如何可视化Attention层](#如何可视化attention层)
 * [致谢](#致谢)
 
-Seq2Seq + Attention + Beam Search
+Seq2Seq + Attention + Beam Search。Encoder 使用 CNN，Decoder 使用 RNN（LSTM 或 GRU解决梯度爆炸），自定义Attention Cell，把 Attention 和 RNN 隐藏节点 组装成
 
 ![](./art/6.png)
 ![](./art/visualization_6_short.gif)
@@ -306,7 +306,7 @@ C:/Users/dlink/AppData/Local/Programs/Python/Python35/python.exe train.py --data
 
 4. 你的模型层数比较多，激活函数都是一样的。可以试试两层、三层的，效果如何。也可以换个激活函数试试。
 
-最后解决: 这不是过拟合，这™是欠拟合，训练多个epoch就行。
+最后解决: 这不是过拟合，这™是欠拟合，训练多个epoch就行。还以为网络实现错了，日。
 
 ### 如何可视化Attention层
 

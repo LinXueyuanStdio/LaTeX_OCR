@@ -128,7 +128,7 @@ class Img2SeqModel(BaseModel):
         # evaluation
         config_eval = Config({"dir_answers": self._dir_output + "formulas_val/", "batch_size": config.batch_size})
         scores = self.evaluate(config_eval, val_set)
-        score = scores[config.metric_val]
+        score = scores["perplexity"]
         lr_schedule.update(score=score)
 
         return score

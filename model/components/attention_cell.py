@@ -3,6 +3,8 @@ import collections
 from tensorflow.contrib.rnn import RNNCell, LSTMStateTuple
 
 # 给这个元组 ("cell_state", "o") 取一个名字，作为注意力模型中的状态
+# cell_state 是 RNNCell 的，也就是 hidden state
+# o 是加上注意力层后，结合 RNNCell 计算出的 output
 AttentionState = collections.namedtuple("AttentionState", ("cell_state", "o"))
 
 
@@ -75,11 +77,10 @@ class AttentionCell(RNNCell):
             # compute o
             o_W_c = tf.get_variable("o_W_c", dtype=tf.float32, shape=(self._n_channels, self._dim_o))
             o_W_h = tf.get_variable("o_W_h", dtype=tf.float32, shape=(self._num_units, self._dim_o))
+            y_W_o = tf.get_variable("y_W_o", dtype=tf.float32, shape=(self._dim_o, self._num_proj))
 
             new_o = tf.tanh(tf.matmul(new_h, o_W_h) + tf.matmul(c, o_W_c))
             new_o = tf.nn.dropout(new_o, self._dropout)
-
-            y_W_o = tf.get_variable("y_W_o", dtype=tf.float32, shape=(self._dim_o, self._num_proj))
             logits = tf.matmul(new_o, y_W_o)
 
             # new Attn cell state

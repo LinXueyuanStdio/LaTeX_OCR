@@ -9,9 +9,9 @@ from model.utils.general import Config
 
 @click.command()
 @click.option('--data', default="configs/data_small.json",
-        help='Path to data json config')
+              help='Path to data json config')
 @click.option('--vocab', default="configs/vocab_small.json",
-        help='Path to vocab json config')
+              help='Path to vocab json config')
 def main(data, vocab):
     data_config = Config(data)
 
@@ -20,11 +20,11 @@ def main(data, vocab):
         path_formulas=data_config.path_formulas_train,
         dir_images=data_config.dir_images_train,
         path_matching=data_config.path_matching_train)
-    test_set  = DataGenerator(
+    test_set = DataGenerator(
         path_formulas=data_config.path_formulas_test,
         dir_images=data_config.dir_images_test,
         path_matching=data_config.path_matching_test)
-    val_set   = DataGenerator(
+    val_set = DataGenerator(
         path_formulas=data_config.path_formulas_val,
         dir_images=data_config.dir_images_val,
         path_matching=data_config.path_matching_val)

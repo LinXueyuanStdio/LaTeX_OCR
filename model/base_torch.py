@@ -217,7 +217,7 @@ class BaseModel(object):
         """
         self.logger.info("- Evaluating...")
         scores = self._run_evaluate_epoch(config, test_set)  # evaluate
-        msg = " ... ".join([" {} is {:04.2f} ".format(k, v) for k, v in scores.items()])
+        msg = " || ".join([" {} is {:04.2f} ".format(k, v) for k, v in scores.items()])
         self.logger.info("- Eval: {}".format(msg))
 
         return scores

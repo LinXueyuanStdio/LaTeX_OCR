@@ -330,9 +330,9 @@ class DecoderRNN(nn.Module):
         self.dim_embeddings = self._config.attn_cell_config.get("dim_embeddings")
 
         self.embed = nn.Embedding(self._n_tok, self.dim_embeddings)
-        self.lstm = nn.LSTM(self.dim_embeddings, hidden_size, num_layers, batch_first=True)
-        self.linear = nn.Linear(hidden_size, vocab_size)
-        self.max_seg_length = max_seq_length
+        # self.lstm = nn.LSTM(self.dim_embeddings, hidden_size, num_layers, batch_first=True)
+        # self.linear = nn.Linear(hidden_size, vocab_size)
+        # self.max_seg_length = max_seq_length
 
     def forward(self, img, formula, lengths):
         """Decodes an image into a sequence of token

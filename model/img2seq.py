@@ -51,9 +51,9 @@ class Img2SeqModel(BaseModel):
         self.dropout = tf.placeholder(tf.float32, shape=(),   name='dropout')
 
         # input of the graph
-        self.img = tf.placeholder(tf.uint8, shape=(None, None, None, 1),  name='img')
-        self.formula = tf.placeholder(tf.int32, shape=(None, None),  name='formula')
-        self.formula_length = tf.placeholder(tf.int32, shape=(None, ),   name='formula_length')
+        self.img = tf.placeholder(tf.uint8, shape=(None, None, None, 1),  name='img')  # (N, H, W, C)，这里C=1，因为是灰度图
+        self.formula = tf.placeholder(tf.int32, shape=(None, None),  name='formula')  # (N, formula_tokens)
+        self.formula_length = tf.placeholder(tf.int32, shape=(None, ),   name='formula_length')  # (N, 1)
 
         # self.pred_train, self.pred_test
         # tensorflow 只有静态计算图，只好同时把 train 和 test 部分的计算图都建了
@@ -75,9 +75,9 @@ class Img2SeqModel(BaseModel):
         self.n_words = tf.reduce_sum(self.formula_length)  # number of words
 
         # tensorboard
+        tf.summary.image("img", self.img)
         tf.summary.scalar("learning_rate", self.lr)
         tf.summary.scalar("dropout", self.dropout)
-        tf.summary.image("img", self.img)
         tf.summary.scalar("loss", self.loss)
         tf.summary.scalar("sum_of_CE_for_each_word", self.ce_words)
         tf.summary.scalar("number_of_words", self.n_words)
@@ -95,7 +95,7 @@ class Img2SeqModel(BaseModel):
         """
         _lr_m = lr_method.lower()  # lower to make sure
 
-        with tf.variable_scope("train_step"):
+        with tf.variable_scope("optimize"):
             # sgd method 优化器
             if _lr_m == 'adam':
                 optimizer = tf.train.AdamOptimizer(lr)
@@ -173,7 +173,7 @@ class Img2SeqModel(BaseModel):
             lr_schedule.update(batch_no=epoch*nbatches + i)
 
             # 生成summary
-            if (i+1) % 100 == 0:
+            if (i+1) % 10 == 0:
                 summary_str = self.sess.run(self.merged, feed_dict=fd)
                 self.file_writer.add_summary(summary_str, epoch)  # 将summary 写入文件
 
@@ -190,7 +190,7 @@ class Img2SeqModel(BaseModel):
             "batch_size": config.batch_size
         })
         scores = self.evaluate(config_eval, val_set)
-        score = scores[config.metric_val]
+        score = scores["perplexity"]
         lr_schedule.update(score=score)
 
         return score

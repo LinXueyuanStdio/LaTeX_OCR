@@ -23,17 +23,16 @@ def dynamic_decode(decoder_cell, maximum_iterations):
 
     """
     try:
-        maximum_iterations = tf.convert_to_tensor(maximum_iterations,
-                dtype=tf.int32)
+        maximum_iterations = tf.convert_to_tensor(maximum_iterations, dtype=tf.int32)
     except ValueError:
         pass
 
     # create TA for outputs by mimicing the structure of decodercell output
-    def create_ta(d):
+    def create_tensor_array(d):
         return tf.TensorArray(dtype=d, size=0, dynamic_size=True)
 
     initial_time = tf.constant(0, dtype=tf.int32)
-    initial_outputs_ta = nest.map_structure(create_ta, decoder_cell.output_dtype)
+    initial_outputs_ta = nest.map_structure(create_tensor_array, decoder_cell.output_dtype)
     initial_state, initial_inputs, initial_finished = decoder_cell.initialize()
 
     def condition(time, unused_outputs_ta, unused_state, unused_inputs,

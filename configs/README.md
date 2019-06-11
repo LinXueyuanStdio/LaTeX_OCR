@@ -61,7 +61,6 @@
     "device": "cuda:3", // 多 GPU
     "criterion_method": "CrossEntropyLoss", // 损失
 
-    "metric_val": "perplexity", // 验证
     "n_epochs": 40, // 训练次数
     "batch_size": 3, // 批次
     "dropout": 1, // dropout
