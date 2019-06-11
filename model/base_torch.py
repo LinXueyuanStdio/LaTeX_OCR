@@ -166,7 +166,7 @@ class BaseModel(object):
         self.logger.info("- Saved model in {}".format(self._dir_model))
 
     # 4. train and evaluate
-    def train(self, config, train_set, val_set, lr_schedule, path_label):
+    def train(self, config, train_set, val_set, lr_schedule):
         """Global training procedure
         Calls method self.run_epoch and saves weights if score improves.
         All the epoch-logic including the lr_schedule update must be done in
@@ -188,7 +188,7 @@ class BaseModel(object):
             self.logger.info("Epoch {:}/{:}".format(epoch+1, config.n_epochs))
 
             # epoch
-            score = self._run_train_epoch(config, train_set, val_set, epoch, lr_schedule, path_label)
+            score = self._run_train_epoch(config, train_set, val_set, epoch, lr_schedule)
 
             # save weights if we have new best score on eval
             if best_score is None or score >= best_score:  # abs(score-0.5) <= abs(best_score-0.5):
@@ -205,7 +205,7 @@ class BaseModel(object):
 
         return best_score
 
-    def evaluate(self, config, test_set, path_label):
+    def evaluate(self, config, test_set):
         """Evaluates model on test set
         Calls method run_evaluate on test_set and takes care of logging
         Args:
@@ -216,7 +216,7 @@ class BaseModel(object):
             scores: (dict) scores["acc"] = 0.85 for instance
         """
         self.logger.info("- Evaluating...")
-        scores = self._run_evaluate_epoch(config, test_set, path_label)  # evaluate
+        scores = self._run_evaluate_epoch(config, test_set)  # evaluate
         msg = " ... ".join([" {} is {:04.2f} ".format(k, v) for k, v in scores.items()])
         self.logger.info("- Eval: {}".format(msg))
 
@@ -228,7 +228,7 @@ class BaseModel(object):
         self.optimizer.step()
 
     # ! MUST OVERWRITE
-    def _run_train_epoch(config, train_set, val_set, epoch, lr_schedule, path_label):
+    def _run_train_epoch(config, train_set, val_set, epoch, lr_schedule):
         """Model_specific method to overwrite
         Performs an epoch of training
         Args:

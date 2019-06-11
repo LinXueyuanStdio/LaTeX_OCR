@@ -44,6 +44,26 @@ def pad_batch_images(images, max_shape=None):
     return batch_images.astype(np.uint8)
 
 
+def pad_batch_images_2(images, max_shape=None):
+    """
+    Args:
+        images: list of arrays
+        target_shape: shape at which we want to pad
+
+    """
+
+    # 1. max shape
+    if max_shape is None:
+        max_shape = get_max_shape(images)
+
+    # 2. apply formating
+    batch_images = 255 * np.ones([len(images)] + list(max_shape))
+
+    for idx, img in enumerate(images):
+        batch_images[idx, :img.shape[0], :img.shape[1]] = img
+
+    return batch_images.astype(np.uint8)
+
 def greyscale(state):
     """Preprocess state (:, :, 3) image into greyscale"""
     state = state[:, :, 0]*0.299 + state[:, :, 1]*0.587 + state[:, :, 2]*0.114

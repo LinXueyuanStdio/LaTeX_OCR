@@ -26,7 +26,7 @@ class Decoder(object):
 
         Args:
             training: (tf.placeholder) bool
-            img: encoded image (tf.Tensor) shape = (N, H, W, C)
+            img: encoded image (tf.Tensor) shape = (N, H, W, C) (N, H/2/2/2-2, W/2/2/2-2, 512)
             formula: (tf.placeholder), shape = (N, T)
 
         Returns:
@@ -37,15 +37,17 @@ class Decoder(object):
 
         """
         dim_embeddings = self._config.attn_cell_config.get("dim_embeddings")
-        E = tf.get_variable("E", initializer=embedding_initializer(), shape=[self._n_tok, dim_embeddings], dtype=tf.float32)
+        E = tf.get_variable("E", shape=[self._n_tok, dim_embeddings],
+                            dtype=tf.float32, initializer=embedding_initializer())
 
-        start_token = tf.get_variable("start_token", dtype=tf.float32, shape=[dim_embeddings], initializer=embedding_initializer())
+        start_token = tf.get_variable("start_token", shape=[dim_embeddings],
+                                      dtype=tf.float32, initializer=embedding_initializer())
 
         batch_size = tf.shape(img)[0]
 
         # training
         with tf.variable_scope("attn_cell", reuse=False):
-            embeddings = get_embeddings(formula, E, dim_embeddings,  start_token, batch_size)
+            embeddings = get_embeddings(formula, E, dim_embeddings,  start_token, batch_size)  # (N, T, dim_embedding)
             attn_meca = AttentionMechanism(img, self._config.attn_cell_config["dim_e"])
             recu_cell = LSTMCell(self._config.attn_cell_config["num_units"])
             attn_cell = AttentionCell(recu_cell, attn_meca, dropout, self._config.attn_cell_config, self._n_tok)
@@ -73,20 +75,20 @@ def get_embeddings(formula, E, dim, start_token, batch_size):
     with the start token
 
     Args:
-        formula: (tf.placeholder) tf.uint32
-        E: tf.Variable (matrix)
+        formula: (tf.placeholder) tf.uint32 shape = (N, T)
+        E: tf.Variable (matrix) shape=[T, dim]
         dim: (int) dimension of embeddings
-        start_token: tf.Variable
+        start_token: tf.Variable shape=[dim]
         batch_size: tf variable extracted from placeholder
 
     Returns:
         embeddings_train: tensor
 
     """
-    formula_ = tf.nn.embedding_lookup(E, formula)
+    formula_ = tf.nn.embedding_lookup(E, formula)  # (N, T, dim_embedding)
     start_token_ = tf.reshape(start_token, [1, 1, dim])
-    start_tokens = tf.tile(start_token_, multiples=[batch_size, 1, 1])
-    embeddings = tf.concat([start_tokens, formula_[:, :-1, :]], axis=1)
+    start_tokens = tf.tile(start_token_, multiples=[batch_size, 1, 1])  # (N, 1, dim_embedding)
+    embeddings = tf.concat([start_tokens, formula_[:, :-1, :]], axis=1)  # (N, T, dim_embedding)
 
     return embeddings
 

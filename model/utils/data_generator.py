@@ -195,6 +195,14 @@ class DataGenerator(object):
             n_iter += 1
             yield result
 
+    def __getitem__(self, i):
+        counter = 0
+        for item in self:
+            if counter == i:
+                return item
+            counter += 1
+        raise NotImplementedError("IndexOutOfBound")
+
     def __len__(self):
         if self._length is None:
             print("First call to len(dataset) - may take a while.")

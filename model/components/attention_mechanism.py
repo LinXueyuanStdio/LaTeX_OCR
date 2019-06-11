@@ -45,6 +45,7 @@ class AttentionMechanism(object):
 
     def context(self, h):
         """Computes attention
+        这里是注意力机制的核心
 
         Args:
             h: (batch_size, num_units) hidden state
@@ -54,6 +55,7 @@ class AttentionMechanism(object):
 
         """
         with tf.variable_scope(self._scope_name):
+            # 1. 传入 img 和 att_img
             if self._tiles > 1: # self._tiles == config.beam_size
                 att_img = tf.expand_dims(self._att_img, axis=1)
                 att_img = tf.tile(att_img, multiples=[1, self._tiles, 1, 1])
@@ -62,75 +64,61 @@ class AttentionMechanism(object):
                 img = tf.tile(img, multiples=[1, self._tiles, 1, 1]) # 在加的这一维上复制 beam_size 个一摸一样的
                 img = tf.reshape(img, shape=[-1, self._n_regions, self._n_channels]) # (tiles*batch, H*W, 512)
             else:
-                att_img = self._att_img
-                img     = self._img
+                att_img = self._att_img  # (tiles*batch, H*W, 256)
+                img     = self._img      # (tiles*batch, H*W, 512)
 
-            # print(img.name, img.shape)
-            # print(att_img.name, att_img.shape)
-            # computes attention over the hidden vector
-            att_h = tf.layers.dense(inputs=h, units=self._dim_e, use_bias=False)
-            # print(h.name, h.shape)
-            # print(att_h.name, att_h.shape)
-
-            # sums the two contributions
-            att_h = tf.expand_dims(att_h, axis=1)
-            att = tf.tanh(att_img + att_h)
-
-            # print(att.name, att.shape)
-
-            # computes scalar product with beta vector
-            # works faster with a matmul than with a * and a tf.reduce_sum
-            att_beta = tf.get_variable("att_beta", shape=[self._dim_e, 1], dtype=tf.float32)
-            att_flat = tf.reshape(att, shape=[-1, self._dim_e]) # 扁平化
-
-            # --- debug
-            # print(att_beta.name, att_beta.shape)
-            # print(att_flat.name, att_flat.shape)
-            # --- debug
-
-            e = tf.matmul(att_flat, att_beta)
-            e = tf.reshape(e, shape=[-1, self._n_regions])
-
-            # print(e.name, e.shape)
-
-            # compute weights
-            a = tf.nn.softmax(e)
-
-            # print(a.name, a.shape)
-
-            # --- for visualize
-            # 下个断点，检查 attention 以可视化
-            def _debug_bkpt(val):
-                global ctx_vector # 用全局变量实现可视化
-
-                # TODO 下面的 if-else 会一直扩充 ctx_vector 可能导致 OOM
-                # TODO 训练时注意注释掉
-                ctx_vector = []
-                # if not ctx_vector:
-                #     ctx_vector = [val]
-                # else:
-                #     ctx_vector += [val]
-                return False
-
-            debug_print_op = tf.py_func(_debug_bkpt, [a], [tf.bool]) # 自定义一个 op 输入是 [a] 输出类型是 [tf.bool]
-            with tf.control_dependencies(debug_print_op):
-                # 声明 op 的执行依赖
-                # 即在执行下面这行代码前，必先执行  debug_print_op
-                a = tf.identity(a, name='a_for_visualize')
-            # --- for visualize
-
-            # print(a.name, a.shape)
+            a = self.compute_attention(h, att_img)
+            a = self.insert_visualize_op(a)
 
             a = tf.expand_dims(a, axis=-1)
-
-            # print(a.name, a.shape)
-            c = tf.reduce_sum(a * img, axis=1)
-
-            # print(c.name, c.shape)
-
-            # print("a.shape and img.shape", a.shape, img.shape)
-
+            c = tf.reduce_sum(a * img, axis=1) # 以 attention 给原来的 img 加权，attention 的地方权重大
             return c
+
+    def compute_attention(self, h, att_img):
+        # computes attention over the hidden vector
+        att_h = tf.layers.dense(inputs=h, units=self._dim_e, use_bias=False)
+        att_h = tf.expand_dims(att_h, axis=1)
+
+        # sums the two contributions
+        att = tf.tanh(att_img + att_h)
+
+        # computes scalar product with beta vector
+        # works faster with a matmul than with a * and a tf.reduce_sum
+        att_beta = tf.get_variable("att_beta", shape=[self._dim_e, 1], dtype=tf.float32)
+        att_flat = tf.reshape(att, shape=[-1, self._dim_e])  # 扁平化
+
+        e = tf.matmul(att_flat, att_beta)
+        e = tf.reshape(e, shape=[-1, self._n_regions])  # (tiles*batch, H*W)
+
+        # compute weights
+        return tf.nn.softmax(e)
+
+    def insert_visualize_op(self, attention):
+        """
+        下个断点，检查 attention 以可视化
+        """
+        def gather_attention(val):
+            global ctx_vector  # 用全局变量实现可视化
+
+            # TODO 下面的 if-else 会一直扩充 ctx_vector 可能导致 OOM
+            # TODO 训练时注意注释掉
+            ctx_vector = []
+            # if not ctx_vector:
+            #     ctx_vector = [val]
+            # else:
+            #     ctx_vector += [val]
+            return False
+
+        # 自定义一个 op 输入是 [a] 输出类型是 [tf.bool]。
+        # 输出类型无所谓，我们只用来把 attention 传递到全局变量。
+        # 这个输出也不是任何 op 的输入。
+        output_attention_op = tf.py_func(gather_attention, [attention], [tf.bool])
+        with tf.control_dependencies(output_attention_op):
+            # 声明 op 的执行依赖
+            # 即在执行下面这行代码前，必先执行  output_attention_op
+            # 这一行本质上也无所谓，因为单位矩阵不改变任何东西
+            attention = tf.identity(attention, name='a_for_visualize')
+        return attention
 
 
     def initial_cell_state(self, cell):
@@ -158,7 +146,7 @@ class AttentionMechanism(object):
         """Returns initial state of dimension specified by dim"""
         with tf.variable_scope(self._scope_name):
             img_mean = tf.reduce_mean(self._img, axis=1)
-            W = tf.get_variable("W_{}_0".format(name), shape=[self._n_channels, dim])
+            W = tf.get_variable("W_{}_0".format(name), shape=[self._n_channels, dim])  # (C, dim)
             b = tf.get_variable("b_{}_0".format(name), shape=[dim])
             h = tf.tanh(tf.matmul(img_mean, W) + b)
 
