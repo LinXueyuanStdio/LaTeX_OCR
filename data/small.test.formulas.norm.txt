@@ -1,0 +1,100 @@
+d s ^ { 2 } = ( 1 - { \frac { q c o s \theta } { r } } ) ^ { \frac { 2 } { 1 + \alpha ^ { 2 } } } \lbrace d r ^ { 2 } + r ^ { 2 } d \theta ^ { 2 } + r ^ { 2 } s i n ^ { 2 } \theta d \varphi ^ { 2 } \rbrace - { \frac { d t ^ { 2 } } { ( 1 - { \frac { q c o s \theta } { r } } ) ^ { \frac { 2 } { 1 + \alpha ^ { 2 } } } } } \, .
+\widetilde \gamma _ { \mathrm { h o p f } } \simeq \sum _ { n > 0 } \widetilde { G } _ { n } { \frac { ( - a ) ^ { n } } { 2 ^ { 2 n - 1 } } }
+( { \cal L } _ { a } g ) _ { i j } = 0 , \ \ \ \ ( { \cal L } _ { a } H ) _ { i j k } = 0 ,
+S _ { s t a t } = 2 \pi \sqrt { N _ { 5 } ^ { ( 1 ) } N _ { 5 } ^ { ( 2 ) } N _ { 5 } ^ { ( 3 ) } } \left( \sqrt { n } + \sqrt { \bar { n } } \right)
+\hat { N } _ { 3 } = \sum \sp f _ { j = 1 } a _ { j } \sp { \dagger } a _ { j } \, .
+\, ^ { * } d \, ^ { * } H = \kappa \, ^ { * } d \phi = J _ { B } .
+{ \frac { \phi ^ { \prime \prime } } { A } } + { \frac { 1 } { A } } \left( - { \frac { 1 } { 2 } } { \frac { A ^ { \prime } } { A } } + 2 { \frac { B ^ { \prime } } { B } } + { \frac { 2 } { r } } \right) \phi ^ { \prime } - { \frac { 2 } { r ^ { 2 } } } \phi - \lambda \phi ( \phi ^ { 2 } - \eta ^ { 2 } ) = 0 \, .
+\partial _ { \mu } ( F ^ { \mu \nu } - e j ^ { \mu } x ^ { \nu } ) = 0 .
+V _ { n s } ( { \tilde { x } } ) = \left( \frac { { \tilde { m } } N ^ { 2 } } { 1 6 \pi } \right) N g ^ { 2 n s - 1 } { \tilde { x } } ^ { 2 } \left\{ { \tilde { x } } ^ { 2 } - \frac { 2 { \tilde { b } } } { 3 } { \tilde { x } } + \frac { { \tilde { b } } ^ { 2 } } { 3 } - ( - 1 ) ^ { n s } { \tilde { c } } \right\} \, .
+g _ { i j } ( x ) = { \frac { 1 } { a ^ { 2 } } } \, \delta _ { i j } , ~ ~ \phi ^ { a } ( x ) = \phi ^ { a } , \quad ( a , \phi ^ { a } \! : ~ \mathrm { c o n s t . } )
+\rho _ { L } ( q ) = \sum _ { m = 1 } ^ { L } \ P _ { L } ( m ) \ { \frac { 1 } { q ^ { m - 1 } } } \ \ .
+e x p \left( - \frac { \partial } { \partial \alpha _ { j } } \theta ^ { j k } \frac { \partial } { \partial \alpha _ { k } } \right)
+L _ { 0 } = \Phi ( w ) = \bigtriangleup \Phi ( w ) ,
+\left( D ^ { * } D ^ { * } + m ^ { 2 } \right) { \cal H } = 0
+{ \frac { d V } { d \Phi } } = - { \frac { w \Phi } { \Phi _ { \! _ { 0 } } ^ { 2 } } } \, .
+g ( z , \bar { z } ) = - \frac { 1 } { 2 } \left[ x ( z , \bar { z } ) \, s + x ^ { * } ( z , \bar { z } ) \, s ^ { * } + u ^ { * } ( z , \bar { z } ) \, t + u ( z , \bar { z } ) \, t ^ { * } \right] ,
+x _ { \mu } ^ { c } = x _ { \mu } + A _ { \mu } .
+s = { \frac { S } { V } } = { \frac { A _ { H } } { l _ { p } ^ { 8 } V } } = { \frac { T ^ { 2 } } { \gamma } } .
+\psi ( \gamma ) = \operatorname { e x p } { - ( { \textstyle { \frac { g ^ { 2 } } { 2 } } } ) \int _ { \gamma } d y ^ { a } \int _ { \gamma } d y ^ { a ^ { \prime } } D _ { 1 } ( y - y ^ { \prime } ) }
+E = E _ { 0 } + \frac { 1 } { 2 \operatorname { s i n h } ( \gamma ( 0 ) / 2 ) } \operatorname { s i n h } \left( \gamma ( 0 ) \left( \frac { 1 } { 2 } + c ( 0 ) \right) \right) h c \nu _ { \mathrm { v i b } }
+\langle T _ { z z } \rangle = - 3 \times \frac { \pi ^ { 2 } } { 1 4 4 0 a ^ { 4 } } .
+\partial _ { u } \xi _ { z } ^ { ( 1 ) } + { \frac { 1 } { u } } \xi _ { z } ^ { ( 1 ) } = { \frac { 1 } { ( \pi T R ) ^ { 2 } u } } \left[ C _ { z } H _ { z z } ^ { \prime } + C _ { t } H _ { t z } ^ { \prime } \right] \, .
+S \sim \tilde { \psi } Q _ { o } \tilde { \psi } + g _ { s } ^ { 1 / 2 } \tilde { \psi } ^ { 3 } + \tilde { \phi } Q _ { c } \tilde { \phi } + g _ { s } \tilde { \phi } ^ { 3 } + \tilde { \phi } B ( g _ { s } ^ { 1 / 2 } \tilde { \psi } ) + \cdots .
+C ( x ^ { \prime } , x ^ { \prime \prime } ) = C \Phi ( x ^ { \prime } , x ^ { \prime \prime } ) \ , \quad \Phi ( x ^ { \prime } , x ^ { \prime \prime } ) = \operatorname { e x p } \left[ - i e \int _ { x ^ { \prime \prime } } ^ { x ^ { \prime } } d x ^ { \mu } A _ { \mu } ( x ) \right] \ ,
+\tilde { \alpha } = \alpha \beta ^ { - m } = \left( \begin{array} { c c c } { \omega _ { k } ^ { - 2 y } \omega _ { 2 d } ^ { 2 m } } & { 0 } & { 0 } \\ { 0 } & { \omega _ { k } ^ { y } \omega _ { 2 d } ^ { - m } } & { 0 } \\ { 0 } & { 0 } & { \omega _ { k } ^ { y } \omega _ { 2 d } ^ { - m } } \\ \end{array} \right)
+d s ^ { 2 } = H ^ { - 2 } f ( r ) d t ^ { 2 } + H ^ { 2 / ( n - 1 ) } ( f ( r ) ^ { - 1 } d r ^ { 2 } + r ^ { 2 } d \Omega _ { n } ^ { 2 } ) ,
+y ^ { 2 } = \rho \; \operatorname { c o s h } \beta \; \operatorname { s i n } \theta \; \operatorname { s i n } \phi \qquad \qquad y ^ { 3 } = \rho \; \operatorname { c o s } \theta
+e ^ { A } = e ^ { A _ { 0 } } \left( t _ { 0 } - \mathrm { s i g n } ( m ) t \right) ^ { - \frac { m } { 2 } } \; , \; \; \; \; \chi = \chi _ { 0 } \left( t _ { 0 } - \mathrm { s i g n } ( m ) t \right) ^ { m } \; ,
+\gamma _ { j } { \cal P } _ { j i } = \frac { 4 } { 3 } \{ [ A d \, T ] [ t _ { 8 } ^ { c } , [ t _ { 8 } ^ { c } , { \gamma } _ { j } ] ] [ A d \, T ^ { - 1 } ] \} { A d \, { \hat { g } } } _ { i j } .
+K _ { \mu \nu } ~ = ~ \frac { 1 } { 2 } \dot { g } _ { \mu \nu } .
+X ( u ) = { \frac { \left( \pm i + e ^ { 3 \eta } \right) \left( - 1 + { e ^ { u } } \right) \left( 1 + { e ^ { u } } \right) x _ { 1 } } { 2 { e ^ { u } } \left( \pm i + { e ^ { 3 \eta + u } } \right) } } ,
+\beta ( g ) \frac { \partial } { \partial g } = 2 g \beta ( g ) \frac { \partial } { \partial g ^ { 2 } }
+A = a r ^ { \beta } , \quad B = b r ^ { \beta + 2 } ; \qquad a / b = c ( \beta + 2 ) / ( \beta - 2 ) ,
+\delta W _ { P \mu } = A _ { \mu } \Phi + B _ { P \mu } ^ { \alpha } K _ { P } ^ { \alpha } \ .
+\frac { 1 } { d - 2 } \tilde { \Pi } ^ { 2 } - \tilde { \Pi } _ { a b } \tilde { \Pi } ^ { a b } = \frac { \left( d - 1 \right) \left( d - 2 \right) } { \ell ^ { 2 } } + R
+\hat { e } = e / \varepsilon , \ \ \ \ \ \ \ \ \ \hat { G } _ { 4 } = G _ { 4 } ,
+V _ { ( n , \, m ) } ( z , \overline { { z } } ) = : \operatorname { e x p } i ( p _ { + } \phi ( z ) + p _ { - } \bar { \phi } ( \overline { { z } } ) ) : \: .
+\langle f | g \rangle _ { { \cal L } ^ { 1 | 2 } } = \langle f _ { 0 } | g _ { 0 } \rangle _ { \cal L } ^ { s } + \langle f _ { 1 } | g _ { 1 } \rangle _ { \cal L } ^ { s + 1 / 2 } + \langle f _ { 2 } | g _ { 2 } \rangle _ { \cal L } ^ { s + 1 / 2 } + \langle f _ { 3 } | g _ { 3 } \rangle _ { \cal L } ^ { s + 1 } \, ,
+\tilde { s } ^ { 0 } ( x , y ) = i e ^ { 2 } \int \! d ^ { 4 } \! z \, S _ { \mathrm { F } } ( x , z ) \, \gamma ^ { \mu } \, S _ { \mathrm { F } } ( z , y ) \, [ d _ { \mu } ( x - z ) + d _ { \mu } ( z - y ) ]
+\left\{ \begin{array} { l c l l } { \phi ~ ( \infty ) } & { = } & { 0 } & { , \vspace { 3 m m } } \\ { \phi ~ ( 0 ) } & { = } & { 1 } & { . } \\ \end{array} \right.
+{ \cal P } _ { \delta x } \equiv { \frac { k ^ { 3 } } { 2 \pi ^ { 2 } } } | \delta x | ^ { 2 } \, ,
+\psi ( x ) = - 2 \phi ( x ) + 2 \phi ( L ) + c ,
+{ } ^ { ( { } ^ { \scriptstyle x } y ) } ( { } ^ { x } z ) = { } ^ { x } ( { } ^ { y } z ) , \qquad \forall x , y , z \in X .
+\delta ( L _ { 1 } + L _ { 2 } ) = 2 \delta \bar { \theta } ( 1 + \gamma ^ { ( p ) } ) T _ { ( p ) } ^ { \nu } \partial _ { \nu } \theta .
+\frac { 1 } { 2 \lambda f ^ { 2 } } \int \; d ^ { 4 } X \, \frac { d ^ { 4 } q } { \left( 2 \pi \right) ^ { 4 } } \left( \varphi ( X ) \right) ^ { 2 } \tilde { \pi } _ { 0 } ( q ) \left[ \partial _ { q } ^ { 2 } + \frac { 4 i \lambda } { q ^ { 2 } - \Sigma ^ { 2 } ( q ) } \right] \tilde { \pi } _ { 0 } ( q ) ,
+G ^ { \mu \nu \mu ^ { \prime } \nu ^ { \prime } } = g ^ { \mu \mu ^ { \prime } } g ^ { \nu \nu ^ { \prime } } + g ^ { \mu \nu ^ { \prime } } g ^ { \nu \mu ^ { \prime } } - { \frac { 2 } { D } } g ^ { \mu \nu } g ^ { \mu ^ { \prime } \nu ^ { \prime } } + C g ^ { \mu \nu } g ^ { \mu ^ { \prime } \nu ^ { \prime } } \: .
+[ M _ { \mu \nu } , M _ { \rho \tau } ] = g _ { \mu \tau } \, M _ { \nu \rho } - g _ { \nu \tau } M _ { \mu \rho } + g _ { \nu \rho } M _ { \mu \tau } - g _ { \mu \rho } M _ { \nu \tau } \, ,
+A _ { 0 } = \pm \sqrt { { \frac { 4 } { 3 ( 1 - \alpha ) } } } e ^ { ( \alpha - 1 ) \phi } \ .
+C _ { m } ( \mu ) = { \frac { 1 } { 2 \pi i } } \int _ { \Gamma _ { r } } { \frac { C _ { m } ( z ) } { z - \mu } } d z ,
+\xi = \alpha ^ { - 1 } \sqrt { \rho } \operatorname { c o s h } ( 2 \alpha ^ { 2 } t ) \, , \quad \eta = \alpha ^ { - 1 } \sqrt { \rho } \operatorname { s i n h } ( 2 \alpha ^ { 2 } t )
+a _ { 1 } = \frac { 2 \tilde { q } } { \alpha ^ { 2 } ( D - 2 ) + 2 q \tilde { q } } , ~ ~ ~ ~ a _ { 2 } = \frac { \alpha ^ { 2 } ( D - 2 ) } { \alpha ^ { 2 } d ( D - 2 ) + 2 \tilde { d } q ^ { 2 } }
+\theta \epsilon ^ { i } = \zeta ^ { i } \, ; \qquad \theta \zeta ^ { i } = \epsilon ^ { i } \, ; \qquad \theta \eta ^ { i } = - \eta ^ { i } \, .
+{ \cal A } _ { f i } ( s ) = - i \frac { Q _ { \mu \nu } V _ { f } ^ { \mu } ( \bar { s } ) V _ { i } ^ { \nu } ( \bar { s } ) } { ( s - \bar { s } ) [ 1 - A ^ { \prime } ( \bar { s } ) ] } + N ,
+\phi ^ { A } = \frac { \partial F ( \phi , \phi ^ { * } ) } { \partial \phi _ { A } ^ { * } } \hspace { 2 c m } \phi _ { A } ^ { * } = \frac { \partial F ( \phi , \phi ^ { * } ) } { \partial \phi ^ { A } } .
+Q ^ { M } = \dot { g } _ { 0 } \int _ { \phi ( \Sigma ) } \sum _ { i = 1 } ^ { l } \beta _ { i } \eta _ { i } \int _ { N _ { i } } \frac 1 { \sqrt { g } } \delta ^ { D } ( x - z _ { i } ( u ) ) \sqrt { g _ { u } }
+\psi ( x ) = [ 2 \pi \sigma ^ { 2 } ] ^ { - 1 / 4 } \operatorname { e x p } \left[ - \left( \frac { x - x _ { 0 } } { 2 \sigma } \right) ^ { 2 } + i p _ { 0 } x \right] ,
+A _ { \mu } = \bar { A } _ { \mu } ( \phi ) + a _ { \mu } \ ,
+\left[ D _ { f } , D \right] = 0 \, .
+\operatorname { e x p } _ { q } A = \sum _ { n = 0 } ^ { \infty } \frac { A ^ { n } } { [ n ] ! }
+\langle b _ { 1 } ( z , \bar { z } ) a _ { 1 } ( z ^ { \prime } , \bar { z } ^ { \prime } ) \rangle = - { \frac { 1 } { \pi } } \partial ~ K _ { 0 } ( d ^ { 2 } m ^ { 2 } ( { \bf p } ) ) ~ ,
+\lambda _ { + } = \frac { 1 + i \omega } { 2 } , \quad \lambda _ { - } = \frac { 1 - i \omega } { 2 }
+1 + \frac { 2 \pi \Lambda G } { 9 \alpha } > 0
+e ^ { - K } = \pm \frac { W ^ { 3 / 2 } } { \omega _ { 1 } \omega _ { 2 } \omega _ { 3 } } \ ,
+{ \cal { Z } } ( \tau { } ) = \sum _ { m } \int { \cal { D } } \Omega { \cal { D } } V { \mathrm { V o l } } _ { Z M } { \mathrm { d e t } } ( d _ { 2 } )
+| 0 ( t ) \rangle _ { e , \mu } \equiv G _ { \theta } ^ { - 1 } ( t ) | 0 \rangle _ { 1 , 2 } \, ,
+\Gamma _ { i j } ^ { k } = ( \partial _ { i } G _ { j { \bar { l } } } ) G ^ { { \bar { l } } k } \,
+{ \cal { F } } : \ < g > = \int d ^ { 3 } \theta \ g ( { \vec { \theta } } ) f ( { \vec { \theta } } , t ) \,
+\tilde { S } _ { r , \Lambda } ( t _ { 2 } , t _ { 1 } ; g ) = - 2 i \delta ( t _ { 2 } - t _ { 1 } ) H _ { I } ^ { ( r ) } ( t _ { 1 } ) + \tilde { S } _ { r , \Lambda } ^ { \prime } ( t _ { 2 } , t _ { 1 } ; g ) ,
+\nu _ { R } ( E ) = \int _ { \mu } ^ { E - \mu _ { Q } } \nu ( E ^ { \prime } ) \nu _ { Q } ( E - E ^ { \prime } ) d E ^ { \prime } ~ ~ ~ .
+Z _ { \mathrm { F } } [ A ] = \int \! D { \bar { \psi } } D \psi e ^ { - \int \! d ^ { 2 } x \, [ \psi _ { 1 } ^ { \dagger } i \partial \psi _ { 1 } + \psi _ { 2 } ^ { \dagger } i { \bar { \partial } } \psi _ { 2 } - \psi _ { 1 } ^ { \dagger } A \psi _ { 1 } - \psi _ { 2 } ^ { \dagger } { \bar { A } } \psi _ { 2 } ] } \; ,
+E q ( 5 . 2 ) T _ { R } \; \sim \; 5 \left( \frac { m } { \mathrm { T e V } } \right) ^ { 3 / 2 } \; \; \; \mathrm { k e V } .
+P _ { n } ^ { p } = \frac { ( - 1 ) ^ { p + n } } { n ! ( p - n ) ! } \mathop { { \prod } ^ { \prime } } _ { k = 0 } ^ { p } ( N - k ) , \quad n = 0 , . . . , p ,
+T _ { { \cal G } } ( - t , - t ^ { - 1 } ) = \sum x ^ { i ( B ) } x ^ { - e ( B ) }
+\left. \begin{array} { c c c } { S _ { \sigma \sigma ^ { \prime } } \nonumber } \\ { S _ { \Delta } \nonumber } \\ { \tilde { S } _ { \Delta } } \\ \end{array} \right\} \varpi = ( \varpi + 2 ) \left\{ \begin{array} { c c c } { S _ { \sigma \sigma ^ { \prime } } \nonumber } \\ { S _ { \Delta } \nonumber } \\ { \tilde { S } _ { \Delta } } \\ \end{array} \right. .
+\Phi _ { 0 } ( Z ) = \delta ^ { - 1 } \alpha , \qquad \Phi _ { 0 } ( Z ) = \alpha ^ { - 1 } \delta
+b ( k ) b ^ { \dagger } ( l ) - q _ { e } b ^ { \dagger } ( l ) b ( k ) = \delta ( k - l ) ,
+{ \cal L } = - \mathrm { \small ~ \frac { 1 } { 2 } ~ } f ^ { 2 } \, \partial _ { \mu } \pi _ { r } \, \partial ^ { \mu } \pi _ { r } - \mathrm { \small ~ \frac { 1 } { 2 } ~ } f ^ { 2 } \lambda \left( \pi _ { r } \pi _ { r } - N \right) \; ,
+E _ { \mathrm { q u a s i l o c a l } } = E _ { + } - E _ { - } = \left( r \left[ 1 - \left| r , _ { y } \right| \right] \right) _ { y = y _ { + } } - \left( r \left[ 1 - \left| r , _ { y } \right| \right] \right) _ { y = y _ { - } } .
+I = 2 \left( { \frac { \alpha } { \operatorname { s i n h } ^ { 2 } A + \operatorname { s i n } ^ { 2 } { \frac { \gamma } { 2 } } } } - { \frac { \operatorname { s i n h } { \frac { 2 A } { \alpha } } } { \operatorname { s i n h } { 2 A } } } ~ { \frac { 1 } { ( \operatorname { s i n h } ^ { 2 } { \frac { A } { \alpha } } + \operatorname { s i n } ^ { 2 } { \frac { [ \gamma ] } { 2 \alpha } } ) } } \right) ~ ~ .
+W ( x ) = \frac { x ^ { 3 } } { 3 } - a ^ { 2 } x ,
+Z _ { M } = \sum _ { j _ { s } } \int d U _ { f } \Pi _ { s } \left( 2 j _ { s } + 1 \right) T r _ { j _ { s } } U _ { s }
+f ( x , p ; t ) = \int \! d a d b ~ \tilde { f } ( a , b ) ~ e ^ { i a x ( - t ) } e ^ { i b p ( - t ) } ,
+\{ \langle n | O | p \rangle \: | n \in \Sigma _ { s } ^ { \prime } \}
+{ \cal L } ^ { ( 0 ) } ( B ) = - { \frac { 1 } { 2 } } B ^ { 2 } \; ,
+\ddot { h } = - \nabla _ { h } \Phi
+\langle 0 | T _ { \mu \nu } | 0 \rangle _ { \mathrm { \tiny ~ R e n . } } = \mathrm { d i a g } \left[ \langle 0 | T _ { t t } | 0 \rangle , 0 , \langle 0 | T _ { l l } | 0 \rangle , \langle 0 | T _ { l l } | 0 \rangle \right] .
+\frac { 1 } { 2 4 . 8 \pi ^ { 2 } } \, \int _ { \cal M } R \wedge R = \frac { 1 } { 2 4 . 8 \pi ^ { 2 } } \, \int _ { { \cal M } } \mathrm { d } C = \frac { 1 } { 2 4 . 8 \pi ^ { 2 } } \, \int _ { \partial { \cal M } } C \, ,
+\quad | A _ { 1 } | ^ { 2 } + | A _ { 2 } | ^ { 2 } - | B _ { 1 } | ^ { 2 } - | B _ { 2 } | ^ { 2 } = 0 .
+e ^ { \phi _ { c } ^ { 6 } } = - { \frac { v _ { a } } { \tilde { v } _ { a } } }
+\mathrm { \boldmath ~ \pi ~ } = \mu ^ { - 1 } \, { \bf p } \; .
+S = \int _ { \mathcal M } \left( { \frac { i } { 2 } } \left[ \overline { \psi } \gamma ^ { a } \nabla _ { a } \psi - \overline { { ( \nabla _ { a } \psi ) } } \gamma ^ { a } \psi \right] - m \overline { \psi } \psi \right) \, ,
+\Psi \sim \operatorname { e x p } \left\{ - \frac { 1 } { \hbar } \int _ { a } ^ { x } \sqrt { 2 ( v - e ) } \right\} \sim \operatorname { e x p } \left\{ - \frac { 1 } { \hbar } x ^ { \frac { 5 } { 2 } } \right\}
+\ddot { R } ^ { k } ( t ) = \omega ^ { k l } \dot { R } ^ { l } ( t ) + O ( \dot { R } ^ { k } \dot { R } ^ { k } ) \; \; .
+{ \cal L } \rightarrow { \cal L } + \frac { \alpha N } { 1 6 \pi ^ { 2 } } F \tilde { F } .
+\partial _ { 0 } { \cal E } + { \bf d i v } { \bf S } = 0 \, .
+\phi ( x , y ) = \lambda ^ { 2 s } \, \phi ( \lambda x , \lambda y )
+S _ { B } [ A ] \; = \; i \, \frac { 1 } { \eta } \, S _ { C S } [ A ] \; + \; R [ \widetilde { F } ] + \frac { i } { \theta } \int d ^ { 3 } x d ^ { 3 } y j _ { \mu } ^ { T } ( x ) { \mathcal K } _ { \mu \nu } ( x - y ) j _ { \nu } ^ { T } ( y ) \; ,
+{ \cal L } = \frac { 1 } { 2 } { \it i } \overline { { \psi } } { \Gamma } ^ { \nu } \hspace { - . 1 5 c m } \stackrel { \; \leftrightarrow } { \partial } _ { \! \nu } \hspace { - . 1 c m } { \psi } - \overline { { \psi } } M { \psi } \quad ,
+m _ { H } \approx 2 7 2 \, \lambda ^ { 1 / 4 } \ \mathrm { G e V } .
+M _ { p _ { e } , q _ { m } } = { \frac { 2 \pi } { g _ { \mathrm { Y M } } ^ { 2 } } } { \frac { q _ { m } u } { \operatorname { c o s } \xi } } = u \sqrt { \left( \frac { 2 \pi q _ { m } } { g _ { Y M } ^ { 2 } } \right) ^ { 2 } + p _ { e } ^ { 2 } } \, .
