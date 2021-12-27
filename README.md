@@ -1,5 +1,5 @@
 # LaTeX OCR
-
+> 本项目增强版：[LaTeX_OCR_PRO](https://github.com/LinXueyuanStdio/LaTeX_OCR_PRO)
 * [1. 搭建环境](#1-搭建环境)
     * [Linux](#linux)
     * [Mac](#mac)
